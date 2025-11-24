@@ -25,21 +25,37 @@ const Sidebar: React.FC<SidebarProps> = ({ setIsOpen, isOpen, links, mainlink ,m
   const location = useLocation();
   const { theme } = useTheme();
 
-  useEffect(() => {
-    const customPaths: Record<string, string> = {
-      "/SuperAdmin/addadmin": "/SuperAdmin/admin",
-      "/SuperAdmin/addcoupon": "/SuperAdmin/coupon",
-      "/SuperAdmin/addpayment": "/SuperAdmin/payment",
-      "/SuperAdmin/addpaymentmethod": "/SuperAdmin/paymentmethod",
-      "/SuperAdmin/addplans": "/SuperAdmin/plans",
-      "/SuperAdmin/addsubscription": "/SuperAdmin/subscription",
-      "/admin/addproject": "/admin/project",
-      "/admin/department": "/admin/adddepartment",
-      "/user/addusers": "/user/users",
-    };
-    const newPath = customPaths[location.pathname] || location.pathname;
-    setIsActive(newPath.toLowerCase());
-  }, [location.pathname]);
+ useEffect(() => {
+  const customPaths: Record<string, string> = {
+    "/SuperAdmin/addadmin": "/SuperAdmin/admin",
+    "/SuperAdmin/addcoupon": "/SuperAdmin/coupon",
+    "/SuperAdmin/addpayment": "/SuperAdmin/payment",
+    "/SuperAdmin/addpaymentmethod": "/SuperAdmin/paymentmethod",
+    "/SuperAdmin/addplans": "/SuperAdmin/plans",
+    "/SuperAdmin/addsubscription": "/SuperAdmin/subscription",
+    "/admin/addproject": "/admin/project",
+    "/admin/adddepartment": "/admin/department",
+    "/admin/addrejected": "/admin/rejected",
+    "/admin/addtask": "/admin/task",
+    "/admin/usertaskproject": "/admin/task",
+    "/admin/userproject": "/admin/project",
+    "/user/addusers": "/user/users",
+  };
+
+  let newPath = location.pathname;
+
+if (location.pathname.startsWith("/admin/adduserproject/")) {
+  newPath = "/admin/project";
+} 
+else if (location.pathname.startsWith("/admin/addusertaskproject/")) {
+  newPath = "/admin/task";
+} 
+else {
+  newPath = customPaths[location.pathname] || location.pathname;
+}
+
+  setIsActive(newPath.toLowerCase());
+}, [location.pathname]);
 
   useEffect(() => {
     if (window.innerWidth >= 1024) setIsOpen(true);

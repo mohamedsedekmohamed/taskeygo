@@ -7,7 +7,7 @@ interface InputFieldProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   name?: string;
   min?: number;
-  type?: "text" | "number" | "email" | "password" | "date";
+  type?: "text" | "number" | "email" | "password" | "date"|"file";
   disabled?: boolean;
 }
 

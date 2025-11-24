@@ -32,6 +32,14 @@ import AddProject from "../Admin/Project/AddProject";
 import Department from "../Admin/Department/Department";
 import AddDepartment from "../Admin/Department/AddDepartment";
 import Subscriptions from "../Admin/Subscriptions/Subscriptions";
+import Task from "../Admin/Task/Task";
+import AddTask from "../Admin/Task/AddTask";
+import Rejected from "../Admin/Rejected/Rejected";
+import AddRejected from "../Admin/Rejected/AddRejected";
+import UserProject from "../Admin/Project/UserProject"
+import AddUserProject from '../Admin/Project/AddUserProject'
+import UserTaskProject from "../Admin/Task/UserTaskProject";
+import AddUserTaskProject from "../Admin/Task/AddUserTaskProject";
 //user
 // import Plansuser from "../Users/Plans/Plans";
 // import Paymentuser from "../Users/Payment/Payment";
@@ -41,6 +49,8 @@ import Home from "../PublicPage/Home";
 import Plansp from '../PublicPage/Plans/Plans'
 import Paymentp from "../PublicPage/Payment/Payment";
 import PaymentMethodsp from "../PublicPage/PaymentMethods/PaymentMethods";
+import Tasks from "../PublicPage/Task/Tasks";
+import Projectuser from '../PublicPage/Project/Project'
 const router = createBrowserRouter([
   {
     path: "/",
@@ -59,6 +69,8 @@ const router = createBrowserRouter([
       { path: "plan", element: <Plansp /> },
       { path: "Payment", element: <Paymentp /> },
       { path: "PaymentMethods", element: <PaymentMethodsp /> },
+      { path: "project", element: <Projectuser /> },
+      { path: "task", element: <Tasks /> },
 
     ],
   },
@@ -109,7 +121,15 @@ const router = createBrowserRouter([
       { path: "addproject", element: <AddProject /> },
       { path: "department", element: <Department /> },
       { path: "adddepartment", element: <AddDepartment /> },
-      { path: "subscriptions", element: <Subscriptions /> }
+      { path: "subscriptions", element: <Subscriptions /> },
+      { path: "task", element: <Task /> },
+      {path:"addtask",element:<AddTask/>},
+      {path:"rejected",element:<Rejected/>},
+      {path:"addrejected",element:<AddRejected/>},
+      {path:"userproject",element:<UserProject/>},
+      {path:"adduserproject/:id",element:<AddUserProject/>},
+      {path:"usertaskproject",element:<UserTaskProject/>},
+      {path:"addusertaskproject/:taskId/:projectId",element:<AddUserTaskProject/>},
     ],
   },
   {

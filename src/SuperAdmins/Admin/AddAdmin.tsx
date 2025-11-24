@@ -100,7 +100,6 @@ if (!formData.name.trim() || formData.name.length < 3) {
     }
   }
 
-  // ✅ payload
   const payload = {
     name: formData.name,
     email: formData.email,

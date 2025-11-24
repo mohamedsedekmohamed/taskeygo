@@ -56,7 +56,7 @@ const Login = () => {
 
         const data = result.data;
         setTimeout(() => {
-          navigate(data.role === "Admin" ? "/admin/dashboard" : "/user/home");
+          navigate(data.role === "admin" ? "/admin/dashboard" : "/user/home");
         }, 800);
       } else {
         setError("❌ Incorrect email or password");

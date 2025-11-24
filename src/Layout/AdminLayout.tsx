@@ -8,7 +8,8 @@ import IconDashboard from "../Icons/IconDashboard";
 import IconProject from "../Icons/IconProject";
 import IconDepartments from "../Icons/IconDepartments";
 import IconSubscription from "../Icons/IconSubscription";
-
+import IconTask from "../Icons/IconTask"
+import Iconrejected from "../Icons/Iconrejected"
 const AdminLayout: React.FC = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { theme } = useTheme();
@@ -32,6 +33,8 @@ const AdminLayout: React.FC = () => {
     { to: "project", name: t("sidebar.project"), icon: <IconProject />, iconActive: <IconProject active /> },
     { to: "department", name: t("sidebar.departments"), icon: <IconDepartments />, iconActive: <IconDepartments active /> },
   { to: "subscriptions", name: t("sidebar.subscriptions"), icon: <IconSubscription />, iconActive: <IconSubscription active /> },
+  { to: "task", name: t("sidebar.task"), icon: <IconTask />, iconActive: <IconTask active /> },
+  { to: "rejected", name: t("sidebar.rejected"), icon: <Iconrejected />, iconActive: <Iconrejected active /> },
   ];
 
   return (

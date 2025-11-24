@@ -41,7 +41,7 @@ const Nav: React.FC = () => {
     i18n.changeLanguage(savedLang);
     document.documentElement.dir = savedLang === "ar" ? "rtl" : "ltr";
   }, [i18n]);
-
+const name = localStorage.getItem("role");
   const handleChangeLang = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const lang = e.target.value;
     i18n.changeLanguage(lang);
@@ -69,7 +69,7 @@ const handleLogout = () => {
         />
         <div className="hidden sm:block">
           <p className={`font-semibold ${theme === "dark" ? "text-white" : "text-maincolor"}`}>
-            {t("admin")}
+            {name}
           </p>
           <p className={`text-sm ${theme === "dark" ? "text-gray-400" : "text-maincolor"}`}>
             {t("dashboard")}

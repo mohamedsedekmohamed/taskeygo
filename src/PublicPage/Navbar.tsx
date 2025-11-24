@@ -8,7 +8,9 @@ import { FaUserAstronaut } from "react-icons/fa6";
 const navLinks = [
   { name: "Home", href: "/user/home" },
   { name: "Plans", href: "/user/plan" },
-  { name: "Payment", href: "/user/payment" },
+  // { name: "Payment", href: "/user/payment" },
+  { name: "Project", href: "/user/project" },
+  { name: "Task", href: "/user/task" },
   { name: "payment Methods", href: "/user/PaymentMethods" },
 ];
 
@@ -34,7 +36,7 @@ const handleLogout = () => {
 
   return (
     <header className="bg-black">
-      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
+      <div className="px-4 mx-auto sm:px-3 lg:px-5">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center justify-between flex-1 gap-4 md:justify-start">
             <a className="block text-teal-600 dark:text-teal-300" href="/user/home">
@@ -73,7 +75,6 @@ const handleLogout = () => {
             </button>
           </div>
 
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex md:items-center md:gap-6">
             {navLinks.map((item) => (
               <a
@@ -97,13 +98,13 @@ const handleLogout = () => {
             </button>
 
             {dropdownOpen && (
-              <div className="absolute right-0 z-10 mt-0.5 w-56 rounded-md border border-gray-100 bg-white shadow-lg dark:border-gray-800 dark:bg-gray-900">
-                <div className="p-2">
+              <div className="absolute right-0 z-10 mt-0.5 w-56 rounded-md border border-gray-100  shadow-lg dark:border-gray-800  bg-black">
+                <div className="flex justify-end p-2">
             
                    <motion.button
       onClick={handleLogout}
       whileTap={{ scale: 0.9 }}
-      className="flex items-center justify-center gap-2 px-1 py-1 text-white transition-all duration-300 bg-red-500 rounded-lg shadow-md hover:bg-red-600"
+      className="flex items-center justify-center w-full gap-2 px-1 py-1 text-white transition-all duration-300 bg-red-500 rounded-lg shadow-md hover:bg-red-600"
     >
       <FaSignOutAlt className="text-xl" /> <p>Log out</p>
     </motion.button>

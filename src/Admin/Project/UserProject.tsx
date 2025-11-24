@@ -7,32 +7,39 @@ import useDelete from "../../Hooks/useDelete";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 import Loading from "../../Component/Loading";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useSearchStore } from "../../store/useSearchStore";
 import { useTranslation } from "react-i18next";
 
-interface ProjectType {
+interface UserType {
   _id: string;
-  name: string;
-  description: string;
+  user_id: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  project_id: string;
+  role: "admin" | "member" | "teamlead"|"Membercanapprove";
   createdAt: string;
 }
 
-const Project: React.FC = () => {
+const UserProject: React.FC = () => {
   const { searchQuery } = useSearchStore();
   const { t } = useTranslation();
   const { theme } = useTheme();
-  const { data, loading, error, get } = useGet<{ projects: ProjectType[] }>();
+  const { data, loading, error, get } = useGet<{ users: UserType[] }>();
   const { del } = useDelete();
   const nav = useNavigate();
+  const location = useLocation();
+  const projectId = location.state || null;
 
   useEffect(() => {
-    get("https://taskatbcknd.wegostation.com/api/admin/project");
-  }, [get]);
+    get(`https://taskatbcknd.wegostation.com/api/admin/user-project/${projectId}`);
+  }, [get, projectId]);
 
-  const handleDelete = async (row: ProjectType) => {
+  const handleDelete = async (row: UserType) => {
     const result = await Swal.fire({
-      title: t("DeleteConfirmationTitle", { name: row.name }),
+      title: t("DeleteConfirmationTitle", { name: row.user_id.name }),
       text: t("DeleteConfirmationText"),
       icon: "warning",
       showCancelButton: true,
@@ -45,36 +52,30 @@ const Project: React.FC = () => {
     });
 
     if (result.isConfirmed) {
-      const res = await del(`https://taskatbcknd.wegostation.com/api/admin/project/${row._id}`);
-
+      const res = await del(`https://taskatbcknd.wegostation.com/api/admin/user-project/${row.user_id._id}/${projectId}`);
       if (res && (res as any).success !== false) {
-        toast.success(t("Project deletedsuccessfully"));
-        get("https://taskatbcknd.wegostation.com/api/admin/project");
+        toast.success(t("User deleted successfully"));
+        get(`https://taskatbcknd.wegostation.com/api/admin/user-project/${projectId}`);
       } else {
-        toast.error(t("Failedtodeleteproject"));
+        toast.error(t("Failed to delete user"));
       }
     }
   };
 
   const columns = [
-    { key: "name", label: t("Name") },
-    { key: "description", label: t("Description") },
+    { key: "name", label: t("Name"), render: (_: any, row: UserType) => row.user_id.name },
+    { key: "email", label: t("Email"), render: (_: any, row: UserType) => row.user_id.email },
+    { key: "role", label: t("Role"), render: (_: any, row: UserType) => row.role },
     {
       key: "actions",
       label: t("Actions"),
-      render: (_: any, row: ProjectType) => (
+      render: (_: any, row: UserType) => (
         <div className="flex gap-2">
           <button
-            onClick={() => nav("/admin/addproject", { state: row._id })}
+            onClick={() => nav(`/admin/adduserproject/${projectId}`, { state: row })}
             className="px-3 py-1 text-white bg-blue-600 rounded hover:bg-blue-700"
           >
             {t("Edit")}
-          </button>
-          <button
-            onClick={() => nav("/admin/userproject", { state: row._id })}
-            className="px-3 py-1 text-white rounded bg-maincolor hover:bg-maincolor/70"
-          >
-{t("userproject")}
           </button>
 
           <button
@@ -88,10 +89,12 @@ const Project: React.FC = () => {
     },
   ];
 
-  const filteredProjects = useMemo(() => {
-    if (!searchQuery || !data?.projects) return data?.projects;
-    return data.projects.filter((p) =>
-      p.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredUsers = useMemo(() => {
+    if (!searchQuery || !data) return data;
+    return data.filter((u) =>
+      u.user_id.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      u.user_id.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      u.role.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [data, searchQuery]);
 
@@ -100,20 +103,20 @@ const Project: React.FC = () => {
   return (
     <div className="p-4">
       <div className="flex items-center justify-between mb-4">
-        <ButtonAdd title={t("project")} to="/admin/addproject" />
+        <ButtonAdd title={t("AddUser")} to={`/admin/adduserproject/${projectId}`} />
       </div>
 
-      {error && <p className="text-red-500">{t("Failedtoloadprojects")}</p>}
+      {error && <p className="text-red-500">{t("Failed to load users")}</p>}
 
-      {filteredProjects && filteredProjects.length > 0 ? (
-        <Table<ProjectType> columns={columns} data={filteredProjects} />
+      {filteredUsers && filteredUsers.length > 0 ? (
+        <Table<UserType> columns={columns} data={filteredUsers} />
       ) : (
         <p className={theme === "dark" ? "text-gray-400" : "text-gray-500"}>
-          {t("NoProjectsFound")}
+          {t("No users found")}
         </p>
       )}
     </div>
   );
 };
 
-export default Project;
+export default UserProject;

@@ -11,35 +11,45 @@ import { useNavigate } from "react-router-dom";
 import { useSearchStore } from "../../store/useSearchStore";
 import { useTranslation } from "react-i18next";
 
-interface DepartmentType {
+interface TaskType {
   _id: string;
   name: string;
+  description?: string;
+  priority?: string;
+  projectId?: { _id: string; name: string };
+  Depatment_id?: { _id: string; name: string };
+  createdBy?: { _id: string; name: string; email: string };
+  status?: string;
+  end_date?: string;
+  file?: string | null;
+  recorde?: string | null;
   createdAt?: string;
   updatedAt?: string;
   __v?: number;
+  email?: string;
 }
 
-interface DepartmentResponse {
+interface TaskResponse {
   success: boolean;
   data: {
     message: string;
-    data: DepartmentType[];
+    tasks: TaskType[];
   };
 }
 
-const Department: React.FC = () => {
+const Task: React.FC = () => {
   const { searchQuery } = useSearchStore();
   const { t } = useTranslation();
   const { theme } = useTheme();
-  const { data, loading, error, get } = useGet<DepartmentResponse>();
+  const { data, loading, error, get } = useGet<TaskResponse>();
   const { del } = useDelete();
   const nav = useNavigate();
 
   useEffect(() => {
-    get("https://taskatbcknd.wegostation.com/api/admin/departments");
+    get("https://taskatbcknd.wegostation.com/api/admin/tasks");
   }, [get]);
 
-  const handleDelete = async (row: DepartmentType) => {
+  const handleDelete = async (row: TaskType) => {
     const result = await Swal.fire({
       title: t("DeleteConfirmationTitle", { name: row.name }),
       text: t("DeleteConfirmationText"),
@@ -55,33 +65,66 @@ const Department: React.FC = () => {
 
     if (result.isConfirmed) {
       const res = await del(
-        `https://taskatbcknd.wegostation.com/api/admin/departments/${row._id}`
+        `https://taskatbcknd.wegostation.com/api/admin/tasks/${row._id}`
       );
 
       if (res && (res as any).success !== false) {
-        toast.success(t("Departmentdeletedsuccessfully"));
-        get("https://taskatbcknd.wegostation.com/api/admin/departments");
+        toast.success(t("TaskDeletedSuccessfully"));
+        get("https://taskatbcknd.wegostation.com/api/admin/tasks");
       } else {
-        toast.error(t("Failedtodeletedepartment"));
+        toast.error(t("FailedToDeleteTask"));
       }
     }
   };
 
   // تعريف الأعمدة
   const columns = [
-    { key: "name", label: t("Name") },
+    { key: "name", label: t("Title") },
+    { key: "description", label: t("Description") },
+    { key: "priority", label: t("Priority") },
+    {
+      key: "projectId",
+      label: t("Project"),
+      render: (_: any, row: TaskType) => row.projectId?.name || "-",
+    },
+    {
+      key: "Department_id",
+      label: t("Department"),
+      render: (_: any, row: TaskType) => row.Depatment_id?.name || "-",
+    },
+    {
+      key: "status",
+      label: t("Status"),
+    },
+    {
+      key: "createdBy",
+      label: t("CreatedBy"),
+      render: (_: any, row: TaskType) => row.createdBy?.name || "-",
+    },
     {
       key: "actions",
       label: t("Actions"),
-      render: (_: any, row: DepartmentType) => (
+      render: (_: any, row: TaskType) => (
         <div className="flex gap-2">
           <button
-            onClick={() => nav("/admin/adddepartment", { state: row._id })}
+            onClick={() => nav("/admin/addtask", { state: row._id })}
             className="px-3 py-1 text-white bg-blue-600 rounded hover:bg-blue-700"
           >
             {t("Edit")}
           </button>
-
+    <button
+onClick={() =>
+  nav("/admin/usertaskproject", {
+    state: {
+      tasktId: row._id,
+      projectId: row.projectId?._id
+    }
+  })
+}
+            className="px-3 py-1 text-white rounded bg-maincolor hover:bg-maincolor/70"
+          >
+usertask
+          </button>
           <button
             onClick={() => handleDelete(row)}
             className="px-3 py-1 text-white bg-red-600 rounded hover:bg-red-700"
@@ -93,34 +136,33 @@ const Department: React.FC = () => {
     },
   ];
 
-  // تجهيز البيانات مع الفلترة
-  const departments = data?.data || [];
+  const tasks = data?.tasks || [];
 
-  const filteredDepartments = useMemo(() => {
-    if (!searchQuery) return departments;
+  const filteredTasks = useMemo(() => {
+    if (!searchQuery||!tasks) return tasks;
     const search = searchQuery.toLowerCase();
-    return departments.filter((d) => d.name.toLowerCase().includes(search));
-  }, [departments, searchQuery]);
+    return tasks.filter((t) => t.name.toLowerCase().includes(search));
+  }, [tasks, searchQuery]);
 
   if (loading) return <Loading />;
 
   return (
     <div className="p-4">
       <div className="flex items-center justify-between mb-4">
-        <ButtonAdd title={t("Department")} to="/admin/adddepartment" />
+        <ButtonAdd title={t("Task")} to="/admin/addtask" />
       </div>
 
-      {error && <p className="text-red-500">{t("Failedtoloaddepartments")}</p>}
+      {error && <p className="text-red-500">{t("FailedToLoadTasks")}</p>}
 
-      {filteredDepartments.length > 0 ? (
-        <Table<DepartmentType> columns={columns} data={filteredDepartments} />
+      {filteredTasks.length > 0 ? (
+        <Table<TaskType> columns={columns} data={filteredTasks} />
       ) : (
         <p className={theme === "dark" ? "text-gray-400" : "text-gray-500"}>
-          {t("NoDepartmentsFound")}
+          {t("NoTasksFound")}
         </p>
       )}
     </div>
   );
 };
 
-export default Department;
+export default Task;

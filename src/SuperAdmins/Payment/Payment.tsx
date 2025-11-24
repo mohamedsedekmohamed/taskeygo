@@ -58,6 +58,7 @@ const Payment: React.FC = () => {
       background: theme === "dark" ? "#1a1a1a" : "#fff",
       color: theme === "dark" ? "#fff" : "#000",
     });
+        const token = localStorage.getItem("token"); 
 
     if (result.isConfirmed) {
       try {
@@ -65,8 +66,10 @@ const Payment: React.FC = () => {
           `https://taskatbcknd.wegostation.com/api/superadmin/payments/${row._id}`,
           {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ status: "approved" }),
+ headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, 
+      },            body: JSON.stringify({ status: "approved" }),
           }
         );
 

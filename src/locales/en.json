@@ -8,11 +8,58 @@
     "plans": "Plans",
     "subscriptions": "Subscriptions",
     "departments":"Departments",
-    "project":"Project"
+    "project":"Project",
+    "task":"Tasks",
+    "rejected":"Reject Reson"
   },
   "lang_en": "English",
   "lang_ar": "العربية",
+  "Projects": "Projects",
+  "AddProject": "Add Project",
+  "ProjectName": "Project Name",
+  "ProjectDescription": "Description",
+  
+  "NoProjectsFound": "No projects found",
+  "FailedToLoadProjects": "Failed to load projects",
 
+   
+  "AmountPaid": "Amount Paid",
+  "PaymentStatus": "Payment Status",
+  "SubscriptionType": "Subscription Type",
+
+  "WebsitesCreated": "Websites Created",
+  "WebsitesRemaining": "Websites Remaining",
+  "FailedToLoadSubscriptions": "Failed to load subscriptions",
+  "NoSubscriptionsFound": "No subscriptions found", 
+  "Department": "Department",
+  "Departments": "Departments",
+  "EditDepartment": "Edit Department",
+  "DepartmentName": "Department Name",
+  "Project":"Project",
+  "Departmentaddedsuccessfully": "Department added successfully",
+  "Departmentupdatedsuccessfully": "Department updated successfully",
+  "Failedtoadddepartment": "Failed to add department",
+  "Failedtoupdatedepartment": "Failed to update department",
+  "Pleaseenterdepartmentname": "Please enter department name",
+  "DeleteDepartmentConfirmTitle": "Delete department: {{name}}?",
+  "DeleteDepartmentConfirmText": "This action cannot be undone",
+
+  "ProjectDeletedSuccessfully": "Project deleted successfully",
+  "FailedToDeleteProject": "Failed to delete project",
+
+  "AddDepartment": "Add Department",
+  "Departmentdeletedsuccessfully": "Department deleted successfully",
+  "Failedtodeletedepartment": "Failed to delete department",
+  "Failedtoloaddepartments": "Failed to load departments",
+  "NoDepartmentsFound": "No departments found",
+  "Pleaseenterprojectname": "Please enter project name",
+  "Pleaseenterprojectdescription": "Please enter project description",
+
+  "Projectupdatedsuccessfully": "Project updated successfully",
+  "Projectaddedsuccessfully": "Project added successfully",
+  "Failedtoloadproject": "Failed to load project data",
+  "Failedtoupdateproject": "Failed to update project",
+  "Failedtoaddproject": "Failed to add project",
   "dashboard": "Dashboard",
   "Admin": "Admins",
   "Coupons": "Coupons",
@@ -153,5 +200,22 @@
   "End": "End",
   "UsedWebsites": "Used Websites",
   "RemainingWebsites": "Remaining Websites"
-  
+  ,
+  "userproject":"User Project",
+  "PleaseEnterUser":"Please Enter User",
+  "ProjectIdMissing":"Project Missing",
+  "UserProjectUpdatedSuccessfully":"User Project Updated Successfully",
+  "FailedToUpdateUserProject":"Failed To Update User Project",
+  "UserProjectAddedSuccessfully":"User Project Added Successfully",
+  "FailedToAddUserProject":"Failed To Add User Project",
+  "EditUserProject":"Edit User Project",
+  "AddUserProject":"Add User Project",
+  "emailuser":"Email User",
+  "SelectRole":"SelectRole",
+  "teamlead":"Teamlead",
+"AddUser":"Add User",
+  "Member":"Member",
+  "admin":"Admin",
+  "Membercanapprove":"Member can approve"
+
 }

@@ -11,37 +11,28 @@ import { useNavigate } from "react-router-dom";
 import { useSearchStore } from "../../store/useSearchStore";
 import { useTranslation } from "react-i18next";
 
-interface DepartmentType {
+interface RejectedReasonType {
   _id: string;
-  name: string;
-  createdAt?: string;
-  updatedAt?: string;
-  __v?: number;
+  reason: string;
+  points: number;
+  createdAt: string;
 }
 
-interface DepartmentResponse {
-  success: boolean;
-  data: {
-    message: string;
-    data: DepartmentType[];
-  };
-}
-
-const Department: React.FC = () => {
+const Rejected: React.FC = () => {
   const { searchQuery } = useSearchStore();
   const { t } = useTranslation();
   const { theme } = useTheme();
-  const { data, loading, error, get } = useGet<DepartmentResponse>();
+  const { data, loading, error, get } = useGet<{ RejectedResons: RejectedReasonType[] }>();
   const { del } = useDelete();
   const nav = useNavigate();
 
   useEffect(() => {
-    get("https://taskatbcknd.wegostation.com/api/admin/departments");
+    get("https://taskatbcknd.wegostation.com/api/admin/rejected-reasons");
   }, [get]);
 
-  const handleDelete = async (row: DepartmentType) => {
+  const handleDelete = async (row: RejectedReasonType) => {
     const result = await Swal.fire({
-      title: t("DeleteConfirmationTitle", { name: row.name }),
+      title: t("DeleteConfirmationTitle", { name: row.reason }),
       text: t("DeleteConfirmationText"),
       icon: "warning",
       showCancelButton: true,
@@ -54,29 +45,27 @@ const Department: React.FC = () => {
     });
 
     if (result.isConfirmed) {
-      const res = await del(
-        `https://taskatbcknd.wegostation.com/api/admin/departments/${row._id}`
-      );
+      const res = await del(`https://taskatbcknd.wegostation.com/api/admin/rejected-reasons/${row._id}`);
 
       if (res && (res as any).success !== false) {
-        toast.success(t("Departmentdeletedsuccessfully"));
-        get("https://taskatbcknd.wegostation.com/api/admin/departments");
+        toast.success(t("RejectedReasonDeletedSuccessfully"));
+        get("https://taskatbcknd.wegostation.com/api/admin/rejected-reasons");
       } else {
-        toast.error(t("Failedtodeletedepartment"));
+        toast.error(t("FailedToDeleteRejectedReason"));
       }
     }
   };
 
-  // تعريف الأعمدة
   const columns = [
-    { key: "name", label: t("Name") },
+    { key: "reason", label: t("Reason") },
+    { key: "points", label: t("Points") },
     {
       key: "actions",
       label: t("Actions"),
-      render: (_: any, row: DepartmentType) => (
+      render: (_: any, row: RejectedReasonType) => (
         <div className="flex gap-2">
           <button
-            onClick={() => nav("/admin/adddepartment", { state: row._id })}
+            onClick={() => nav("/admin/addrejected", { state: row._id })}
             className="px-3 py-1 text-white bg-blue-600 rounded hover:bg-blue-700"
           >
             {t("Edit")}
@@ -93,34 +82,32 @@ const Department: React.FC = () => {
     },
   ];
 
-  // تجهيز البيانات مع الفلترة
-  const departments = data?.data || [];
-
-  const filteredDepartments = useMemo(() => {
-    if (!searchQuery) return departments;
-    const search = searchQuery.toLowerCase();
-    return departments.filter((d) => d.name.toLowerCase().includes(search));
-  }, [departments, searchQuery]);
+  const filteredReasons = useMemo(() => {
+    if (!searchQuery || !data?.RejectedResons) return data?.RejectedResons;
+    return data.RejectedResons.filter((r) =>
+      r.reason.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [data, searchQuery]);
 
   if (loading) return <Loading />;
 
   return (
     <div className="p-4">
       <div className="flex items-center justify-between mb-4">
-        <ButtonAdd title={t("Department")} to="/admin/adddepartment" />
+        <ButtonAdd title={t("RejectedReason")} to="/admin/addrejected" />
       </div>
 
-      {error && <p className="text-red-500">{t("Failedtoloaddepartments")}</p>}
+      {error && <p className="text-red-500">{t("FailedToLoadRejectedReasons")}</p>}
 
-      {filteredDepartments.length > 0 ? (
-        <Table<DepartmentType> columns={columns} data={filteredDepartments} />
+      {filteredReasons && filteredReasons.length > 0 ? (
+        <Table<RejectedReasonType> columns={columns} data={filteredReasons} />
       ) : (
         <p className={theme === "dark" ? "text-gray-400" : "text-gray-500"}>
-          {t("NoDepartmentsFound")}
+          {t("NoRejectedReasonsFound")}
         </p>
       )}
     </div>
   );
 };
 
-export default Department;
+export default Rejected;
