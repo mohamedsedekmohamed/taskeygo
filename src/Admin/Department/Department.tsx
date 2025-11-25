@@ -93,7 +93,6 @@ const Department: React.FC = () => {
     },
   ];
 
-  // تجهيز البيانات مع الفلترة
   const departments = data?.data || [];
 
   const filteredDepartments = useMemo(() => {

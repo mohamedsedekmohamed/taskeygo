@@ -63,7 +63,7 @@ const EXIT_KEYFRAMES = {
   right: [NO_CLIP, BOTTOM_LEFT_CLIP],
 };
 
-const LinkBox = ({ Icon, href }) => {
+const LinkBox = ({ Icon, href }: { Icon: React.ComponentType<{ className: string }>; href: string }) => {
   const [scope, animate] = useAnimate();
 
   const getNearestSide = (e) => {

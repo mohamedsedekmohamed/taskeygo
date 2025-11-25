@@ -31,11 +31,10 @@ interface TaskType {
 
 interface TaskResponse {
   success: boolean;
-  data: {
-    message: string;
-    tasks: TaskType[];
-  };
+  message?: string;
+  tasks: TaskType[];
 }
+
 
 const Task: React.FC = () => {
   const { searchQuery } = useSearchStore();
@@ -136,7 +135,7 @@ usertask
     },
   ];
 
-  const tasks = data?.tasks || [];
+  const tasks = useMemo(() =>data?.tasks || [], [data]);
 
   const filteredTasks = useMemo(() => {
     if (!searchQuery||!tasks) return tasks;

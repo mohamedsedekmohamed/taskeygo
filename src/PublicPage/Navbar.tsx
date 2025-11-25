@@ -8,7 +8,7 @@ import { FaUserAstronaut } from "react-icons/fa6";
 const navLinks = [
   { name: "Home", href: "/user/home" },
   { name: "Plans", href: "/user/plan" },
-  // { name: "Payment", href: "/user/payment" },
+  { name: "Rejections", href: "/user/rejections" },
   { name: "Project", href: "/user/project" },
   // { name: "Task", href: "/user/task" },
   { name: "payment Methods", href: "/user/PaymentMethods" },

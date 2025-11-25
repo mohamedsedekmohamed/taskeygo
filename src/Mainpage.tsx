@@ -1,6 +1,5 @@
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { motion, useMotionTemplate, useScroll, useTransform } from "framer-motion";
-// import { FaUserShield, FaUserTie, FaUser } from "react-icons/fa";
 import { FaUserTie, FaUser } from "react-icons/fa";
 import { FiArrowRight } from "react-icons/fi";
 import Lenis from "@studio-freight/lenis";
@@ -15,6 +14,7 @@ const LenisWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
+    localStorage.clear()
     lenisRef.current = new Lenis({ lerp: 0.05, smooth: true } as any);
 
     const animate = (time: number) => {
@@ -77,7 +77,7 @@ const TextParallaxContentExample = () => {
 
 const IMG_PADDING = 12;
 
-const TextParallaxContent = ({ imgUrl, subheading, heading, children }) => {
+const TextParallaxContent = ({ imgUrl, subheading, heading, children }: { imgUrl: string; subheading: string; heading: string; children: React.ReactNode }) => {
   return (
     <div
       style={{
@@ -94,7 +94,7 @@ const TextParallaxContent = ({ imgUrl, subheading, heading, children }) => {
   );
 };
 
-const StickyImage = ({ imgUrl }) => {
+const StickyImage = ({ imgUrl }: { imgUrl: string }) => {
   const targetRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: targetRef,
@@ -127,7 +127,7 @@ const StickyImage = ({ imgUrl }) => {
   );
 };
 
-const OverlayCopy = ({ subheading, heading }) => {
+const OverlayCopy: React.FC<{ subheading: string; heading: string }> = ({ subheading, heading }) => {
   const targetRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: targetRef,
@@ -153,7 +153,7 @@ const OverlayCopy = ({ subheading, heading }) => {
     </motion.div>
   );
 };
-
+  
 const ExampleContent = () => (
   <div className="grid max-w-5xl grid-cols-1 gap-8 px-4 pt-12 pb-24 mx-auto md:grid-cols-12">
     <h2 className="col-span-1 py-2 text-3xl font-bold md:col-span-4">

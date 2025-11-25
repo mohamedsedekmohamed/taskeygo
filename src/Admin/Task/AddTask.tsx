@@ -136,15 +136,45 @@ const AddTask: React.FC = () => {
   };
 
 const handleSave = async () => {
-  if (!title.trim() || title.length < 3) {
-    toast.error(t("PleaseEnterTaskTitle"));
+if (!title.trim()) {
+  toast.error(t("TitleIsRequired")); 
+  return;
+}
+if (title.trim().length < 3) {
+  toast.error(t("TitleTooShort"));
+  return;
+}
+
+if (!description.trim()) {
+  toast.error(t("DescriptionIsRequired")); 
+  return;
+}
+if (description.trim().length < 5) {
+  toast.error(t("DescriptionTooShort"));
+  return;
+}
+
+
+  if (!projectId) {
+    toast.error(t("PleaseSelectProject"));
     return;
   }
 
-  if (!file && !audioURL && !recorde) {
-    toast.error(t("PleaseUploadFileOrRecordAudio"));
+  if (!department) {
+    toast.error(t("PleaseSelectDepartment"));
     return;
   }
+
+  if (!priority || ![1, 2, 3].includes(priority)) {
+    toast.error(t("PleaseSelectPriority"));
+    return;
+  }
+
+  if (!end_date) {
+    toast.error(t("PleaseSelectEndDate"));
+    return;
+  }
+
 
   try {
     const priorityText =
@@ -160,15 +190,8 @@ const handleSave = async () => {
     if (department) formData.append("Depatment_id", department);
     if (end_date) formData.append("end_date", end_date);
 
-  if (file) {
-    console.log("Appending file:", file); // 🔍 اطبع هنا
-    formData.append("file", file);
-  }
   
-  // 🔍 اطبع كل الـ FormData
-  // for (let pair of formData.entries()) {
-  //   console.log(pair[0], pair[1]);
-  // }    
+  
     if (audioURL) {
       const blob = await fetch(audioURL).then(r => r.blob());
       formData.append("recorde", blob, "record.webm");

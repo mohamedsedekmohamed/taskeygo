@@ -51,7 +51,7 @@ const UserTaskProject: React.FC = () => {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
-        const Reasons: UserReasons[] = (res.data.data?.RejectedResons || []).map((item: any) => ({
+        const Reasons: UserReasons[] = (res.data.data?.RejectedResons || []).map((item: { _id: string; reason?: string; points?: string }) => ({
           _id: item._id,
           reason: item.reason || "Unknown User",
           points: item.points || "Unknown User",

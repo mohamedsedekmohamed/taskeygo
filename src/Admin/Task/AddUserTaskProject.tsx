@@ -12,19 +12,22 @@ import { useTranslation } from "react-i18next";
 import Select from "react-select";
 // import type { MultiValue } from "react-select";
 import makeAnimated from "react-select/animated";
-import { useTheme } from "../../Hooks/ThemeContext";
+// import { useTheme } from "../../Hooks/ThemeContext";
 
 interface UserTask {
   _id?: string;
   user_id: string; 
   task_id: string;
-  User_taskId?: { id: string }[]; // ✅ Array of objects with id
+  User_taskId?: string[];
   role: "Member" | "Membercanapprove";
 }
 
 interface UserOption {
   _id: string;
   email: string;
+  user_id: {
+    _id: string;
+  };
 }
 
 interface UserReasons {
@@ -46,7 +49,6 @@ const AddUserTaskProject: React.FC = () => {
   const isEdit = !!row;
   const { t } = useTranslation();
   const animatedComponents = makeAnimated();
-  const { theme } = useTheme();
 
   const { post, loading: postLoading } = usePost();
   const { put, loading: putLoading } = usePut();

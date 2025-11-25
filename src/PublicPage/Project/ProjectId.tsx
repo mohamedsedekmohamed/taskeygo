@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { UserCircle, Mail, Calendar, ClipboardList, Folder, Check, AlertCircle, Search, Filter } from "lucide-react";
 import Loader from "../../Component/Loading";
 import { FaUsers, FaTasks, FaCheckCircle, FaClock, FaFlagCheckered } from 'react-icons/fa';
@@ -367,7 +367,7 @@ placeholder="Search for a task..."
                     }`}></div>
 
                     {!hasTaskData ? (
-                   <Link to={"/user/rejections"} className="text-center">
+                   <div  className="text-center">
   <AlertCircle className="w-12 h-12 mx-auto mb-3 text-gray-400" />
   <h3 className="mb-2 text-lg font-bold text-gray-600">Incomplete Task</h3>
   
@@ -380,7 +380,7 @@ placeholder="Search for a task..."
   <p className="text-xs text-gray-400">
     Created: {formatDate(task.createdAt)}
   </p>
-</Link>
+</div>
 
                     ) : (
                       <>
@@ -421,8 +421,9 @@ placeholder="Search for a task..."
                         </div>
 
                         <button
-                          onClick={() => nav(`/user/task/${task.task_id._id}`)}
+                          onClick={() => task.task_id && nav(`/user/task/${task.task_id._id}`)}
                           className={`w-full py-3 font-semibold text-white transition-all duration-300 transform rounded-xl hover:scale-105  bg-black`}
+                          disabled={!task.task_id}
                         >
 View Details
                         </button>
