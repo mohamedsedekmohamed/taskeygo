@@ -21,6 +21,12 @@ interface ProjectData {
   name: string;
   description: string;
 }
+interface ProjectsResponse {
+  projects: Option[];
+}
+interface ProjectsResponses {
+  data: Option[];
+}
 
 const AddTask: React.FC = () => {
   const nav = useNavigate();
@@ -31,7 +37,8 @@ const AddTask: React.FC = () => {
 
   const { post, loading: postLoading } = usePost();
   const { put, loading: putLoading } = usePut();
-  const { get: getOptions } = useGet<{ data: Option[] }>();
+const { get: getOptions } = useGet<ProjectsResponse>();
+const { get: getOptionss } = useGet<ProjectsResponses>();
   const { get: getTask } = useGet<ProjectData>();
 
   const [title, setTitle] = useState("");
@@ -51,9 +58,9 @@ const AddTask: React.FC = () => {
     const fetchOptions = async () => {
       try {
         const projects = await getOptions("https://taskatbcknd.wegostation.com/api/admin/project");
-        setProjectOptions(projects?.projects || []);
+        setProjectOptions(projects?.projects  || []);
 
-        const departments = await getOptions("https://taskatbcknd.wegostation.com/api/admin/departments");
+        const departments = await getOptionss("https://taskatbcknd.wegostation.com/api/admin/departments");
         setDepartmentOptions(departments?.data || []);
       } catch {
         toast.error(t("FailedToLoadOptions"));

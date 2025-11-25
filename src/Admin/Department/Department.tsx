@@ -21,10 +21,8 @@ interface DepartmentType {
 
 interface DepartmentResponse {
   success: boolean;
-  data: {
     message: string;
     data: DepartmentType[];
-  };
 }
 
 const Department: React.FC = () => {
@@ -92,14 +90,13 @@ const Department: React.FC = () => {
       ),
     },
   ];
+const departments =  useMemo(() =>data?.data || [], [data]);
 
-  const departments = data?.data || [];
-
-  const filteredDepartments = useMemo(() => {
-    if (!searchQuery) return departments;
-    const search = searchQuery.toLowerCase();
-    return departments.filter((d) => d.name.toLowerCase().includes(search));
-  }, [departments, searchQuery]);
+const filteredDepartments = useMemo(() => {
+  if (!searchQuery) return departments;
+  const search = searchQuery.toLowerCase();
+  return departments.filter((d) => d.name.toLowerCase().includes(search));
+}, [departments, searchQuery]);
 
   if (loading) return <Loading />;
 

@@ -5,7 +5,20 @@ import useGet from "../../Hooks/useGet";
 import Loading from "../../Component/Loading";
 import { useSearchStore } from "../../store/useSearchStore";
 import { useTranslation } from "react-i18next";
-import { AiOutlineUser, AiOutlineMail, AiOutlineCreditCard, AiOutlineCalendar, AiOutlineCheckCircle, AiOutlineDollarCircle, AiOutlineDatabase, AiOutlineGlobal } from "react-icons/ai";
+import {
+  AiOutlineUser,
+  AiOutlineMail,
+  AiOutlineCreditCard,
+  AiOutlineCalendar,
+  AiOutlineCheckCircle,
+  AiOutlineDollarCircle,
+  AiOutlineDatabase,
+  AiOutlineGlobal,
+} from "react-icons/ai";
+
+// =========================
+//      TYPES
+// =========================
 
 interface SubscriptionType {
   _id: string;
@@ -32,18 +45,29 @@ interface SubscriptionType {
 
 interface SubscriptionResponse {
   success: boolean;
-  data: {
     message: string;
     data: SubscriptionType[];
-  };
 }
+
+interface InfoCardProps {
+  icon: JSX.Element;
+  label: string;
+  value: string | number | undefined | null;
+}
+
+interface TableColumn<T> {
+  key: string;
+  label: string;
+  render?: (value: any, row: T) => JSX.Element | string | number;
+}
+
 
 const Subscriptions: React.FC = () => {
   const { searchQuery } = useSearchStore();
   const { t } = useTranslation();
   const { theme } = useTheme();
-  const { data, loading, error, get } = useGet<SubscriptionResponse>();
 
+  const { data, loading, error, get } = useGet<SubscriptionResponse>();
   const [selected, setSelected] = useState<SubscriptionType | null>(null);
   const [showPopup, setShowPopup] = useState(false);
 
@@ -61,29 +85,57 @@ const Subscriptions: React.FC = () => {
     get("https://taskatbcknd.wegostation.com/api/admin/subscriptions");
   }, [get]);
 
-  const subscriptions = data?.data || [];
+  const subscriptions: SubscriptionType[] = data?.data ?? [];
 
+ 
   const filtered = useMemo(() => {
     if (!searchQuery) return subscriptions;
     const s = searchQuery.toLowerCase();
-    return subscriptions.filter((sub) =>
-      sub.userId?.name?.toLowerCase().includes(s) ||
-      sub.userId?.email?.toLowerCase().includes(s) ||
-      sub.planId?.name?.toLowerCase().includes(s)
+    return subscriptions.filter(
+      (sub) =>
+        sub.userId?.name?.toLowerCase().includes(s) ||
+        sub.userId?.email?.toLowerCase().includes(s) ||
+        sub.planId?.name?.toLowerCase().includes(s)
     );
   }, [subscriptions, searchQuery]);
 
-  const columns = [
-    { key: "user", label: t("User"), render: (_: any, row: SubscriptionType) => row.userId?.name },
-    { key: "email", label: t("Email"), render: (_: any, row: SubscriptionType) => row.userId?.email },
-    { key: "plan", label: t("Plan"), render: (_: any, row: SubscriptionType) => row.planId?.name },
-    { key: "monthlyPrice", label: t("MonthlyPrice"), render: (_: any, row: SubscriptionType) => row.planId?.price_monthly },
-    { key: "annualPrice", label: t("AnnualPrice"), render: (_: any, row: SubscriptionType) => row.planId?.price_annually },
-    { key: "status", label: t("Status") },
+
+
+  const columns: TableColumn<SubscriptionType>[] = [
+    {
+      key: "user",
+      label: t("User"),
+      render: (_, row) => row.userId?.name,
+    },
+    {
+      key: "email",
+      label: t("Email"),
+      render: (_, row) => row.userId?.email,
+    },
+    {
+      key: "plan",
+      label: t("Plan"),
+      render: (_, row) => row.planId?.name,
+    },
+    {
+      key: "monthlyPrice",
+      label: t("MonthlyPrice"),
+      render: (_, row) => row.planId?.price_monthly,
+    },
+    {
+      key: "annualPrice",
+      label: t("AnnualPrice"),
+      render: (_, row) => row.planId?.price_annually,
+    },
+    {
+      key: "status",
+      label: t("Status"),
+      render: (_, row) => row.status,
+    },
     {
       key: "actions",
       label: t("Details"),
-      render: (_: any, row: SubscriptionType) => (
+      render: (_, row) => (
         <button
           onClick={() => openPopup(row)}
           className="flex items-center gap-2 px-3 py-1 text-white transition rounded-lg bg-maincolor hover:bg-maincolor/80"
@@ -111,77 +163,71 @@ const Subscriptions: React.FC = () => {
         </p>
       )}
 
+      {/* Popup */}
+      {showPopup && selected && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
+          <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-6 w-[90%] max-w-lg max-h-[80vh] overflow-auto">
 
+            {/* Header */}
+            <div className="flex items-center justify-between pb-3 mb-6 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                {t("SubscriptionDetails")}
+              </h2>
+              <button
+                onClick={closePopup}
+                className="text-2xl text-gray-500 hover:text-red-500"
+              >
+                ✕
+              </button>
+            </div>
 
-{/* Popup Modal */}
-{showPopup && selected && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center transition-opacity bg-black bg-opacity-50 backdrop-blur-sm">
-    <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-6 w-[90%] max-w-lg max-h-[80vh] overflow-auto transform transition-transform duration-300 scale-100">
-      
-      {/* Header */}
-      <div className="flex items-center justify-between pb-3 mb-6 border-b border-gray-200 dark:border-gray-700">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{t("SubscriptionDetails")}</h2>
-        <button onClick={closePopup} className="text-2xl text-gray-500 transition-colors hover:text-red-500">
-          ✕
-        </button>
-      </div>
+            <div className="space-y-4">
+              <InfoCard icon={<AiOutlineUser className="text-2xl text-blue-500" />} label={t("User")} value={selected.userId?.name} />
 
-      {/* Content */}
-      <div className="space-y-4">
+              <InfoCard icon={<AiOutlineMail className="text-2xl text-green-500" />} label={t("Email")} value={selected.userId?.email} />
 
-        {/* User */}
-        <InfoCard icon={<AiOutlineUser className="text-2xl text-blue-500" />} label={t("User")} value={selected.userId?.name} />
+              <InfoCard icon={<AiOutlineCreditCard className="text-2xl text-purple-500" />} label={t("Plan")} value={selected.planId?.name} />
 
-        {/* Email */}
-        <InfoCard icon={<AiOutlineMail className="text-2xl text-green-500" />} label={t("Email")} value={selected.userId?.email} />
+              <div className="grid grid-cols-2 gap-4">
+                <InfoCard icon={<AiOutlineCalendar className="text-2xl text-orange-500" />} label={t("StartDate")} value={selected.startDate?.slice(0, 10)} />
+                <InfoCard icon={<AiOutlineCalendar className="text-2xl text-red-500" />} label={t("EndDate")} value={selected.endDate?.slice(0, 10)} />
+              </div>
 
-        {/* Plan */}
-        <InfoCard icon={<AiOutlineCreditCard className="text-2xl text-purple-500" />} label={t("Plan")} value={selected.planId?.name} />
+              <InfoCard icon={<AiOutlineCheckCircle className="text-2xl text-yellow-500" />} label={t("PaymentStatus")} value={selected.PaymentId?.status} />
 
-        {/* Dates */}
-        <div className="grid grid-cols-2 gap-4">
-          <InfoCard icon={<AiOutlineCalendar className="text-2xl text-orange-500" />} label={t("StartDate")} value={selected.startDate.slice(0,10)} />
-          <InfoCard icon={<AiOutlineCalendar className="text-2xl text-red-500" />} label={t("EndDate")} value={selected.endDate.slice(0,10)} />
+              <InfoCard icon={<AiOutlineDollarCircle className="text-2xl text-teal-500" />} label={t("AmountPaid")} value={selected.PaymentId?.amount} />
+
+              <InfoCard icon={<AiOutlineDatabase className="text-2xl text-pink-500" />} label={t("SubscriptionType")} value={selected.PaymentId?.subscriptionType} />
+
+              <InfoCard icon={<AiOutlineGlobal className="text-2xl text-blue-400" />} label={t("WebsitesCreated")} value={selected.websites_created_count} />
+
+              <InfoCard icon={<AiOutlineGlobal className="text-2xl text-indigo-500" />} label={t("WebsitesRemaining")} value={selected.websites_remaining_count} />
+            </div>
+
+            <div className="mt-6 text-right">
+              <button
+                onClick={closePopup}
+                className="px-6 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700"
+              >
+                {t("Close")}
+              </button>
+            </div>
+          </div>
         </div>
-
-        {/* Payment Status */}
-        <InfoCard icon={<AiOutlineCheckCircle className="text-2xl text-yellow-500" />} label={t("PaymentStatus")} value={selected.PaymentId?.status} />
-
-        {/* Amount Paid */}
-        <InfoCard icon={<AiOutlineDollarCircle className="text-2xl text-teal-500" />} label={t("AmountPaid")} value={selected.PaymentId?.amount} />
-
-        {/* Subscription Type */}
-        <InfoCard icon={<AiOutlineDatabase className="text-2xl text-pink-500" />} label={t("SubscriptionType")} value={selected.PaymentId?.subscriptionType} />
-
-        {/* Websites Created */}
-        <InfoCard icon={<AiOutlineGlobal className="text-2xl text-blue-400" />} label={t("WebsitesCreated")} value={selected.websites_created_count} />
-
-        {/* Websites Remaining */}
-        <InfoCard icon={<AiOutlineGlobal className="text-2xl text-indigo-500" />} label={t("WebsitesRemaining")} value={selected.websites_remaining_count} />
-
-      </div>
-
-      {/* Footer */}
-      <div className="mt-6 text-right">
-        <button
-          onClick={closePopup}
-          className="px-6 py-2 text-white transition-colors bg-blue-600 rounded-lg hover:bg-blue-700"
-        >
-          {t("Close")}
-        </button>
-      </div>
-    </div>
-  </div>
-)}
-
-
+      )}
     </div>
   );
 };
 
 export default Subscriptions;
 
-const InfoCard = ({ icon, label, value }) => (
+interface InfoCardProps {
+  icon: JSX.Element;
+  label: string;
+  value: string | number | undefined | null;
+}
+
+const InfoCard: React.FC<InfoCardProps> = ({ icon, label, value }) => (
   <div className="flex items-center gap-3 p-3 transition-colors bg-gray-100 cursor-default rounded-xl dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600">
     {icon}
     <div>

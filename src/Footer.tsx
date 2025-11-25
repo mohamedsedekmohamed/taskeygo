@@ -65,52 +65,52 @@ const EXIT_KEYFRAMES = {
 
 const LinkBox = ({ Icon, href }: { Icon: React.ComponentType<{ className: string }>; href: string }) => {
   const [scope, animate] = useAnimate();
+const getNearestSide = (e: React.MouseEvent<HTMLElement>) => {
+  const box = (e.target as HTMLElement).getBoundingClientRect();
 
-  const getNearestSide = (e) => {
-    const box = e.target.getBoundingClientRect();
-
-    const proximityToLeft = {
-      proximity: Math.abs(box.left - e.clientX),
-      side: "left",
-    };
-    const proximityToRight = {
-      proximity: Math.abs(box.right - e.clientX),
-      side: "right",
-    };
-    const proximityToTop = {
-      proximity: Math.abs(box.top - e.clientY),
-      side: "top",
-    };
-    const proximityToBottom = {
-      proximity: Math.abs(box.bottom - e.clientY),
-      side: "bottom",
-    };
-
-    const sortedProximity = [
-      proximityToLeft,
-      proximityToRight,
-      proximityToTop,
-      proximityToBottom,
-    ].sort((a, b) => a.proximity - b.proximity);
-
-    return sortedProximity[0].side;
+  const proximityToLeft = {
+    proximity: Math.abs(box.left - e.clientX),
+    side: "left" as const,
+  };
+  const proximityToRight = {
+    proximity: Math.abs(box.right - e.clientX),
+    side: "right" as const,
+  };
+  const proximityToTop = {
+    proximity: Math.abs(box.top - e.clientY),
+    side: "top" as const,
+  };
+  const proximityToBottom = {
+    proximity: Math.abs(box.bottom - e.clientY),
+    side: "bottom" as const,
   };
 
-  const handleMouseEnter = (e) => {
-    const side = getNearestSide(e);
+  const sortedProximity = [
+    proximityToLeft,
+    proximityToRight,
+    proximityToTop,
+    proximityToBottom,
+  ].sort((a, b) => a.proximity - b.proximity);
 
-    animate(scope.current, {
-      clipPath: ENTRANCE_KEYFRAMES[side],
-    });
-  };
+  return sortedProximity[0].side;
+};
 
-  const handleMouseLeave = (e) => {
-    const side = getNearestSide(e);
+ const handleMouseEnter = (e: React.MouseEvent<HTMLElement>) => {
+  const side = getNearestSide(e);
 
-    animate(scope.current, {
-      clipPath: EXIT_KEYFRAMES[side],
-    });
-  };
+  animate(scope.current, {
+    clipPath: ENTRANCE_KEYFRAMES[side],
+  });
+};
+
+const handleMouseLeave = (e: React.MouseEvent<HTMLElement>) => {
+  const side = getNearestSide(e);
+
+  animate(scope.current, {
+    clipPath: EXIT_KEYFRAMES[side],
+  });
+};
+
 
   return (
     <a
