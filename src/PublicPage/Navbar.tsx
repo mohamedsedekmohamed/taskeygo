@@ -10,7 +10,7 @@ const navLinks = [
   { name: "Plans", href: "/user/plan" },
   // { name: "Payment", href: "/user/payment" },
   { name: "Project", href: "/user/project" },
-  { name: "Task", href: "/user/task" },
+  // { name: "Task", href: "/user/task" },
   { name: "payment Methods", href: "/user/PaymentMethods" },
 ];
 
@@ -98,7 +98,7 @@ const handleLogout = () => {
             </button>
 
             {dropdownOpen && (
-              <div className="absolute right-0 z-10 mt-0.5 w-56 rounded-md border border-gray-100  shadow-lg dark:border-gray-800  bg-black">
+              <div className="absolute right-0 z-100 top-2 mt-0.5 w-56 rounded-md border border-gray-100  shadow-lg dark:border-gray-800  bg-black">
                 <div className="flex justify-end p-2">
             
                    <motion.button

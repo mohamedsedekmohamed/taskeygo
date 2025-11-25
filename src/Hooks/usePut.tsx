@@ -36,7 +36,7 @@ export default function usePut<T = any, B = any>() {
           const res: AxiosResponse<T> = await axios.put(url, body, {
             headers: {
               Authorization: token ? `Bearer ${token}` : "",
-              "Content-Type": "application/json",
+              // "Content-Type": "application/json",
             },
           });
 

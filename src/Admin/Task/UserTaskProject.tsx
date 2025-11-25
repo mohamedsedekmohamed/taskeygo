@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ButtonAdd from "../../Ui/ButtonAdd";
 import Table from "../../Ui/Table";
 import { useTheme } from "../../Hooks/ThemeContext";
@@ -7,9 +7,10 @@ import useDelete from "../../Hooks/useDelete";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 import Loading from "../../Component/Loading";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useSearchStore } from "../../store/useSearchStore";
 import { useTranslation } from "react-i18next";
+import axios from "axios";
 
 interface UserInfo {
   _id: string;
@@ -25,20 +26,40 @@ roleInsideTask:string
 status:string;
   user: UserInfo;
 }
+interface UserReasons {
+  _id: string;
+  reason: string;
+  points: string;
+}
 
 const UserTaskProject: React.FC = () => {
+  const [option,setOption]=useState<UserReasons[]>([]);
+    const token = localStorage.getItem("token") || "";
+
   const { searchQuery } = useSearchStore();
   const { t } = useTranslation();
   const { theme } = useTheme();
 
-  // 👈 data is an array directly based on your log
   const { data, loading, error, get } = useGet<UserTaskItem[]>();
   const { del } = useDelete();
-  const nav = useNavigate();
   const location = useLocation();
   const { tasktId, projectId } = location.state || {};
 
   useEffect(() => {
+     axios
+      .get(`https://taskatbcknd.wegostation.com/api/admin/rejected-reasons`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        const Reasons: UserReasons[] = (res.data.data?.RejectedResons || []).map((item: any) => ({
+          _id: item._id,
+          reason: item.reason || "Unknown User",
+          points: item.points || "Unknown User",
+        }));
+        console.log(Reasons)
+        setOption(Reasons);
+      })
+      .catch((err) => console.error(err));
     if (tasktId) {
       get(`https://taskatbcknd.wegostation.com/api/admin/user-task/${tasktId}`);
     }
@@ -102,110 +123,137 @@ const UserTaskProject: React.FC = () => {
       key: "status",
       label: t("status"),
     },
-    {
-      key: "actions",
-      label: t("Actions"),
-      render: (_: any, row: UserTaskItem) => (
-        <div className="flex gap-2">
-          {/* <button
-            onClick={() =>
-              nav(`/admin/editusertaskproject/${row.user._id}`, {
-                state: { tasktId, projectId },
-              })
+  {
+  key: "actions",
+  label: t("Actions"),
+  render: (_: any, row: UserTaskItem) => (
+    <div className="flex gap-2">
+      <select
+        className="px-3 py-1 text-black bg-white border border-gray-300 rounded hover:border-gray-500"
+        value={row.roleInsideTask}
+        onChange={async (e) => {
+          const newRole = e.target.value;
+          try {
+            const res = await fetch(
+              `https://taskatbcknd.wegostation.com/api/admin/user-task/role/${tasktId}`,
+              {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${localStorage.getItem("token")}`,
+                },
+                body: JSON.stringify({
+                  user_id: row.user._id,
+                  role: newRole,
+                }),
+              }
+            );
+            const data = await res.json();
+            if (data.success) {
+              toast.success(t("RoleUpdatedSuccessfully"));
+              get(`https://taskatbcknd.wegostation.com/api/admin/user-task/${tasktId}`);
+            } else toast.error(t("FailedToUpdateRole"));
+          } catch (err) {
+            toast.error(t("UnknownError"));
+          }
+        }}
+      >
+        <option value="Member">Member</option>
+        <option value="Membercanapprove">Membercanapprove</option>
+      </select>
+
+    {(row.status === "Approved from Member_can_approve" || row.status === "done") && (
+  <div>
+  <select
+        className="px-3 py-1 text-black bg-white border border-gray-300 rounded hover:border-gray-500"
+        value={row.status}
+        onChange={async (e) => {
+          const newStatus = e.target.value;
+          if (newStatus === "rejected") {
+            const reasonId = await Swal.fire({
+              title: t("SelectRejectionReason"),
+              input: "select",
+inputOptions: Object.fromEntries(
+  option.map(opt => [opt._id, `${opt.reason} (${opt.points})`])
+),
+              inputPlaceholder: t("SelectReason"),
+              showCancelButton: true,
+            });
+
+            if (reasonId.isConfirmed) {
+              try {
+                const res = await fetch(
+                  `https://taskatbcknd.wegostation.com/api/admin/user-task/${row.userTaskId}`,
+                  {
+                    method: "PUT",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                    body: JSON.stringify({
+                      // User_taskId: row.userTaskId,
+                      status: newStatus,
+                      rejection_reasonId: reasonId.value,
+                    }),
+                  }
+                );
+                const data = await res.json();
+                if (data.success) {
+                  toast.success(t("StatusUpdatedSuccessfully"));
+                  get(`https://taskatbcknd.wegostation.com/api/admin/user-task/${tasktId}`);
+                } else toast.error(t("FailedToUpdateStatus"));
+              } catch (err) {
+                toast.error(t("UnknownError"));
+              }
             }
-            className="px-3 py-1 text-white bg-blue-600 rounded hover:bg-blue-700"
-          >
-            {t("Edit")}
-          </button> */}
-<select
-  className="px-3 py-1 text-black bg-white border border-gray-300 rounded hover:border-gray-500"
-  value={row.roleInsideTask} 
-  onChange={async (e) => {
-    const newRole = e.target.value;
+          } else {
+            try {
+              const res = await fetch(
+                `https://taskatbcknd.wegostation.com/api/admin/user-task/${row.userTaskId}`,
+                {
+                  method: "PUT",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                  },
+                  body: JSON.stringify({
+                    // User_taskId: row.userTaskId,
+                    status: newStatus,
+                  }),
+                }
+              );
+              const data = await res.json();
+              if (data.success) {
+                toast.success(t("StatusUpdatedSuccessfully"));
+                get(`https://taskatbcknd.wegostation.com/api/admin/user-task/${tasktId}`);
+              } else toast.error(t("FailedToUpdateStatus"));
+            } catch (err) {
+              toast.error(t("UnknownError"));
+            }
+          }
+        }}
+      >
+        <option value="">Select</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
+      </select>  </div>
+)}
 
-    try {
-      const res = await fetch(
-        `https://taskatbcknd.wegostation.com/api/admin/user-task/role/${row.userTaskId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({
-            user_id: row.user._id,
-            role: newRole,
-          }),
-        }
-      );
+    
 
-      const data = await res.json();
-      if (data.success) {
-        toast.success(t("RoleUpdatedSuccessfully"));
-        get(`https://taskatbcknd.wegostation.com/api/admin/user-task/${tasktId}`);
-      } else {
-        toast.error(t("FailedToUpdateRole"));
-      }
-    } catch (err) {
-      toast.error(t("UnknownError"));
-    }
-  }}
->
-  <option value="Member">Member</option>
-  <option value="Membercanapprove">Membercanapprove</option>
-</select>
+      {/* Delete button */}
+      <button
+        onClick={() => handleDelete(row)}
+        className="px-3 py-1 text-white bg-red-600 rounded hover:bg-red-700"
+      >
+        {t("Delete")}
+      </button>
+    </div>
+  ),
+}
 
-
-
-<button
-  onClick={async () => {
-    try {
-      const newRole = row.user.role === "Member" ? "Membercanapprove" : "Member";
-
-      const res = await fetch(
-        `https://taskatbcknd.wegostation.com/api/admin/user-task/${row.user._id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`, 
-          },
-          body: JSON.stringify({
-            user_id: row.user._id,
-            role: newRole,
-          }),
-        }
-      );
-
-      const data = await res.json();
-      if (data.success) {
-        toast.success(t("RoleUpdatedSuccessfully"));
-        get(`https://taskatbcknd.wegostation.com/api/admin/user-task/${tasktId}`);
-      } else {
-        toast.error(t("FailedToUpdateRole"));
-      }
-    } catch (err) {
-      toast.error(t("UnknownError"));
-    }
-  }}
-  className="px-3 py-1 text-white rounded bg-fuchsia-900 hover:bg-yellow-700"
->
-  {t("stutes")}
-</button>
-
-
-          <button
-            onClick={() => handleDelete(row)}
-            className="px-3 py-1 text-white bg-red-600 rounded hover:bg-red-700"
-          >
-            {t("Delete")}
-          </button>
-        </div>
-      ),
-    },
   ];
 
-  // 🔍 Filtering
   const filteredUsers = useMemo(() => {
     if (!data) return [];
     if (!searchQuery) return data;

@@ -38,7 +38,7 @@ export default function usePost<T = any, B = any>() {
           const res: AxiosResponse<T> = await axios.post(url, body, {
             headers: {
               Authorization: token ? `Bearer ${token}` : "",
-              "Content-Type": "application/json",
+              // "Content-Type": "application/json",
             },
           });
 

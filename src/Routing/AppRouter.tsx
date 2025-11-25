@@ -51,6 +51,8 @@ import Paymentp from "../PublicPage/Payment/Payment";
 import PaymentMethodsp from "../PublicPage/PaymentMethods/PaymentMethods";
 import Tasks from "../PublicPage/Task/Tasks";
 import Projectuser from '../PublicPage/Project/Project'
+import ProjectId from '../PublicPage/Project/ProjectId'
+import Rejections from '../PublicPage/Rejections/Rejections'
 const router = createBrowserRouter([
   {
     path: "/",
@@ -70,7 +72,9 @@ const router = createBrowserRouter([
       { path: "Payment", element: <Paymentp /> },
       { path: "PaymentMethods", element: <PaymentMethodsp /> },
       { path: "project", element: <Projectuser /> },
-      { path: "task", element: <Tasks /> },
+      { path: "rejections", element: <Rejections /> },
+      { path: "task/:id", element: <Tasks /> },
+      { path: "ProjectId/:id", element: <ProjectId /> },
 
     ],
   },

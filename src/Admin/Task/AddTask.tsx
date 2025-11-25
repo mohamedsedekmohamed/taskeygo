@@ -11,17 +11,6 @@ import usePut from "../../Hooks/usePut";
 import useGet from "../../Hooks/useGet";
 import { useTranslation } from "react-i18next";
 
-interface TaskData {
-  title: string;
-  description: string;
-  department: string;
-  priority: number | null;
-  end_date: string;
-  projectId: string;
-  file: string;
-  recorde: string;
-}
-
 interface Option {
   _id: string;
   name: string;
@@ -43,36 +32,28 @@ const AddTask: React.FC = () => {
   const { post, loading: postLoading } = usePost();
   const { put, loading: putLoading } = usePut();
   const { get: getOptions } = useGet<{ data: Option[] }>();
-  const { get: getTask } = useGet<ProjectData >();
+  const { get: getTask } = useGet<ProjectData>();
 
-  const [formData, setFormData] = useState<TaskData>({
-    title: "",
-    description: "",
-    projectId: "",
-    department: "",
-    priority: null,
-    end_date: "",
-    file: "",
-    recorde:""
-  });
-  const [file, setFile] = useState<string | null>(null);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [projectId, setProjectId] = useState("");
+  const [department, setDepartment] = useState("");
+  const [priority, setPriority] = useState<number | null>(null);
+  const [end_date, setEndDate] = useState("");
+  const [recorde, setRecorde] = useState("");
 
+  const [file, setFile] = useState<File | null>(null);
   const [loadingData, setLoadingData] = useState(false);
   const [projectOptions, setProjectOptions] = useState<Option[]>([]);
   const [departmentOptions, setDepartmentOptions] = useState<Option[]>([]);
 
-  // Fetch select options
   useEffect(() => {
     const fetchOptions = async () => {
       try {
-        const projects = await getOptions(
-          "https://taskatbcknd.wegostation.com/api/admin/project"
-        );
+        const projects = await getOptions("https://taskatbcknd.wegostation.com/api/admin/project");
         setProjectOptions(projects?.projects || []);
 
-        const departments = await getOptions(
-          "https://taskatbcknd.wegostation.com/api/admin/departments"
-        );
+        const departments = await getOptions("https://taskatbcknd.wegostation.com/api/admin/departments");
         setDepartmentOptions(departments?.data || []);
       } catch {
         toast.error(t("FailedToLoadOptions"));
@@ -81,34 +62,31 @@ const AddTask: React.FC = () => {
     fetchOptions();
   }, []);
 
-  // Fetch task data if edit
+  // Fetch task on edit
   useEffect(() => {
     const fetchTask = async () => {
       if (isEdit && TaskId) {
         setLoadingData(true);
         try {
-          const res = await getTask(
-            `https://taskatbcknd.wegostation.com/api/admin/tasks/${TaskId}`
-          );
+          const res = await getTask(`https://taskatbcknd.wegostation.com/api/admin/tasks/${TaskId}`);
+
           if (res?.task) {
             const task = res.task;
-            setFormData({
-              title: task.name || "",
-              description: task.description || "",
-              projectId: task.projectId?._id || "",
-              department: task.Depatment_id?._id || "",
-              priority:
-                task.priority === "low"
-                  ? 1
-                  : task.priority === "medium"
-                  ? 2
-                  : task.priority === "high"
-                  ? 3
-                  : null,
-              end_date: task.end_date ? task.end_date.split("T")[0] : "",
-              file: task.file || "",
-              recorde:task.recorde
-            });
+
+            setTitle(task.name || "");
+            setDescription(task.description || "");
+            setProjectId(task.projectId?._id || "");
+            setDepartment(task.Depatment_id?._id || "");
+
+            setPriority(
+              task.priority === "low" ? 1 :
+              task.priority === "medium" ? 2 :
+              task.priority === "high" ? 3 : null
+            );
+
+            setEndDate(task.end_date ? task.end_date.split("T")[0] : "");
+            setRecorde(task.recorde || "");
+
             if (task.file) setFile(null);
           }
         } catch {
@@ -118,9 +96,11 @@ const AddTask: React.FC = () => {
         }
       }
     };
-    fetchTask();
-  }, [TaskId]);
 
+    fetchTask();
+  }, [TaskId,isEdit]);
+
+  // Audio recording
   const [recording, setRecording] = useState<boolean>(false);
   const [audioURL, setAudioURL] = useState<string | null>(null);
 
@@ -131,18 +111,21 @@ const AddTask: React.FC = () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorderRef.current = new MediaRecorder(stream);
+
       mediaRecorderRef.current.ondataavailable = (e: BlobEvent) => {
         chunksRef.current.push(e.data);
       };
+
       mediaRecorderRef.current.onstop = () => {
         const blob = new Blob(chunksRef.current, { type: "audio/webm" });
         setAudioURL(URL.createObjectURL(blob));
         chunksRef.current = [];
       };
+
       mediaRecorderRef.current.start();
       setRecording(true);
-    } catch (err) {
-      console.error(err);
+
+    } catch {
       toast.error(t("FailedToAccessMicrophone"));
     }
   };
@@ -152,80 +135,54 @@ const AddTask: React.FC = () => {
     setRecording(false);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSelectChange = (name: keyof TaskData, value: string | number | null) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
- const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const selectedFile = e.target.files?.[0] || null;
-  if (!selectedFile) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    const fileContent = reader.result as string; 
-setFile(fileContent)
-  };
-  reader.onerror = (err) => {
-    console.error("Error reading file", err);
-  };
-  reader.readAsDataURL(selectedFile);
-};
-
 const handleSave = async () => {
-  if (!formData.title.trim() || formData.title.length < 3) {
+  if (!title.trim() || title.length < 3) {
     toast.error(t("PleaseEnterTaskTitle"));
     return;
   }
 
-  if (!file && !audioURL && !formData.file) {
+  if (!file && !audioURL && !recorde) {
     toast.error(t("PleaseUploadFileOrRecordAudio"));
     return;
   }
 
   try {
-    const payload = new FormData();
+    const priorityText =
+      priority === 1 ? "low" :
+      priority === 2 ? "medium" :
+      priority === 3 ? "high" : "";
 
-    if (file) {
-      payload.append("file", file);
-    } 
-    else if (audioURL) {
-     const audioBlob = await fetch(audioURL).then(r => r.blob());
-     payload.append("file", audioBlob, "recording.webm"); 
-   }
+    const formData = new FormData();
+    formData.append("name", title);
+    formData.append("description", description);
+    if (priorityText) formData.append("priority", priorityText);
+    if (projectId) formData.append("projectId", projectId);
+    if (department) formData.append("Depatment_id", department);
+    if (end_date) formData.append("end_date", end_date);
 
-    payload.append("name", formData.title);
-    payload.append("description", formData.description);
-
-    let priorityText = "";
-    switch (formData.priority) {
-      case 1:
-        priorityText = "low";
-        break;
-      case 2:
-        priorityText = "medium";
-        break;
-      case 3:
-        priorityText = "high";
-        break;
+  if (file) {
+    console.log("Appending file:", file); // 🔍 اطبع هنا
+    formData.append("file", file);
+  }
+  
+  // 🔍 اطبع كل الـ FormData
+  // for (let pair of formData.entries()) {
+  //   console.log(pair[0], pair[1]);
+  // }    
+    if (audioURL) {
+      const blob = await fetch(audioURL).then(r => r.blob());
+      formData.append("recorde", blob, "record.webm");
     }
-    if (priorityText) payload.append("priority", priorityText);
-    if (formData.projectId) payload.append("projectId", formData.projectId);
-    if (formData.department) payload.append("Depatment_id", formData.department);
-    if (formData.end_date) payload.append("end_date", formData.end_date);
 
-    let res;
-    if (isEdit) {
-      res = await put(
-        `https://taskatbcknd.wegostation.com/api/admin/tasks/${TaskId}`,
-        payload
-      );
-    } else {
-      res = await post("https://taskatbcknd.wegostation.com/api/admin/tasks", payload);
-    }
+    if (recorde) formData.append("recordeText", recorde);
+
+    const url = isEdit
+      ? `https://taskatbcknd.wegostation.com/api/admin/tasks/${TaskId}`
+      : "https://taskatbcknd.wegostation.com/api/admin/tasks";
+
+    const res = isEdit 
+      ? await put(url, formData) 
+      : await post(url, formData);
 
     if (res?.success !== false) {
       toast.success(isEdit ? t("TaskUpdatedSuccessfully") : t("TaskAddedSuccessfully"));
@@ -233,10 +190,12 @@ const handleSave = async () => {
     } else {
       toast.error(res.error || t("FailedToAddTask"));
     }
+
   } catch (err: any) {
     toast.error(err?.message || t("UnknownError"));
   }
 };
+
 
 
   if ((isEdit && loadingData) || postLoading || putLoading) {
@@ -250,80 +209,88 @@ const handleSave = async () => {
   return (
     <div className="p-6 space-y-6">
       <Titles title={isEdit ? t("EditTask") : t("AddTask")} />
+
       <div className="flex flex-col max-w-lg gap-4">
+
         <InputField
           placeholder={t("TaskTitle")}
-          name="title"
-          value={formData.title}
-          onChange={handleChange}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
+
         <InputField
           placeholder={t("TaskDescription")}
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
         />
+
         <InputArrow
+        name="Department"
           placeholder={t("Department")}
-          name="department"
-          value={formData.department}
-          onChange={(value) => handleSelectChange("department", value)}
+          value={department}
+          onChange={(value) => setDepartment(value)}
           options={departmentOptions.map((d) => ({ id: d._id, name: d.name }))}
         />
+
         <InputArrow
+                name="Project"
+
           placeholder={t("Project")}
-          name="projectId"
-          value={formData.projectId}
-          onChange={(value) => handleSelectChange("projectId", value)}
+          value={projectId}
+          onChange={(value) => setProjectId(value)}
           options={projectOptions.map((p) => ({ id: p._id, name: p.name }))}
         />
+
         <InputArrow
+             name="Priority"
           placeholder={t("Priority")}
-          name="priority"
-          value={formData.priority || ""}
-          onChange={(value) => handleSelectChange("priority", Number(value))}
+          value={priority || ""}
+          onChange={(value) => setPriority(Number(value))}
           options={[
             { id: 1, name: t("Low") },
             { id: 2, name: t("Medium") },
             { id: 3, name: t("High") },
           ]}
         />
+
         <InputField
           placeholder={t("EndDate")}
-          name="end_date"
           type="date"
-          value={formData.end_date}
-          onChange={handleChange}
+          value={end_date}
+          onChange={(e) => setEndDate(e.target.value)}
         />
 
         <div className="flex flex-col gap-2">
           <label className="text-sm font-medium">{t("UploadFileOrRecord")}</label>
-          <input
-            type="file"
-            accept="application/pdf"
-            onChange={handleFileChange}
-            className="w-full px-5 py-3 placeholder-gray-700 border-2 rounded-xl bg-two text-maincolor border-zinc-700 focus:outline-none focus:ring-2 focus:ring-four/50 focus:border-four"
-          />
+
+<input
+  type="file"
+  accept=".pdf,.doc,.docx,.xls,.xlsx"
+  onChange={(e) => {
+    const selectedFile = e.target.files?.[0];
+    console.log("Selected file:", selectedFile); // 🔍 اطبع هنا عشان تتأكد
+    setFile(selectedFile || null);
+  }}
+  className="w-full px-5 py-3 border-2 rounded-xl"
+/>
 
           {file && (
             <div className="flex items-center justify-between px-3 py-1 mt-2 bg-gray-100 rounded">
               <p>File uploaded</p>
-              <button type="button" onClick={() => setFile(null)} className="font-bold text-red-500">
-                ✕
-              </button>
+              <button className="font-bold text-red-500" onClick={() => setFile(null)}>✕</button>
             </div>
           )}
 
-          {/* تسجيل الصوت */}
           <div className="flex items-center gap-2 mt-2">
             <button
               type="button"
               onClick={startRecording}
-              disabled={recording || !!formData.file}
-              className={`px-4 py-2 text-white rounded ${recording || !!formData.file ? "bg-gray-400" : "bg-green-500"}`}
+              disabled={recording}
+              className={`px-4 py-2 text-white rounded ${recording ? "bg-gray-400" : "bg-green-500"}`}
             >
               {t("StartRecording")}
             </button>
+
             <button
               type="button"
               onClick={stopRecording}
@@ -337,7 +304,10 @@ const handleSave = async () => {
           {audioURL && (
             <div className="flex items-center justify-between px-3 py-1 mt-2 bg-gray-100 rounded">
               <audio src={audioURL} controls />
-              <button type="button" onClick={() => setAudioURL(null)} className="font-bold text-red-500">
+              <button
+                className="font-bold text-red-500"
+                onClick={() => setAudioURL(null)}
+              >
                 ✕
               </button>
             </div>

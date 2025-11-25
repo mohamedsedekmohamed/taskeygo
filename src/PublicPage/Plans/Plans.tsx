@@ -55,7 +55,7 @@ const Plans: React.FC = () => {
     );
 
   return (
-    <div className="flex flex-col items-center min-h-screen p-6 bg-white max-w-screen">
+    <div className="flex flex-col items-center min-h-screen p-6 max-w-screen">
       <h1 className="z-10 mb-12 text-4xl font-extrabold text-center text-black">
         Our Plans
       </h1>
