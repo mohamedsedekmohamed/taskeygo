@@ -35,6 +35,7 @@ interface TaskData {
   user_id: string;
   task_id: Task | null;
   status: string;
+  projectId:string;
   is_finished: boolean;
   role: string;
   createdAt: string;
@@ -421,9 +422,9 @@ placeholder="Search for a task..."
                         </div>
 
                         <button
-                          onClick={() => task.task_id && nav(`/user/task/${task.task_id._id}`)}
+                          onClick={() => task.task_id.projectId && nav(`/user/task/${task.task_id.projectId}`)}
                           className={`w-full py-3 font-semibold text-white transition-all duration-300 transform rounded-xl hover:scale-105  bg-black`}
-                          disabled={!task.task_id}
+                          disabled={!task.task_id.projectId}
                         >
 View Details
                         </button>

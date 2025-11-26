@@ -19,7 +19,7 @@ interface UserType {
     email: string;
   };
   project_id: string;
-  role: "admin" | "member" | "teamlead"|"Membercanapprove";
+  role: "admin" | "member" | "teamlead"|"membercanapprove";
   createdAt: string;
 }
 

@@ -36,7 +36,6 @@ interface ApiResponse {
   };
 }
 
-// Task Card Component
 const TaskCard: React.FC<{ task: Task }> = ({ task }) => {
     const [status, setStatus] = useState(task.status);
   const [loadingStatus, setLoadingStatus] = useState(false);
