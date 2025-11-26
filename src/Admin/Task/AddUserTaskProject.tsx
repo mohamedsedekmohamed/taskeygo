@@ -17,7 +17,7 @@ interface UserTask {
   user_id: string; 
   task_id: string;
   User_taskId?: string[];
-  role: "Member" | "Membercanapprove";
+  role: "member" | "membercanapprove";
 }
 
 interface UserOption {
@@ -52,7 +52,7 @@ const AddUserTaskProject: React.FC = () => {
   const [formData, setFormData] = useState<UserTask>({
     user_id: "",
     task_id: taskId || "",
-    role: "Member",
+    role: "member",
     User_taskId: [],
   });
 
@@ -90,7 +90,7 @@ const [usertask, setUsertask] = useState<UserReasons[]>([]);
   const handleRoleChange = (value: string) => {
     setFormData((prev) => ({
       ...prev,
-      role: value as "Member" | "Membercanapprove",
+      role: value as "member" | "membercanapprove",
     }));
   };
 
@@ -179,8 +179,8 @@ options={usertask.map((user) => ({
           value={formData.role}
           onChange={handleRoleChange}
           options={[
-            { id: "Member", name: t("Member") },
-            { id: "Membercanapprove", name: t("Membercanapprove") },
+            { id: "member", name: t("Member") },
+            { id: "membercanapprove", name: t("Membercanapprove") },
           ]}
         />
 

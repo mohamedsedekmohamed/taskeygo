@@ -160,8 +160,8 @@ const UserTaskProject: React.FC = () => {
           }
         }}
       >
-        <option value="Member">Member</option>
-        <option value="Membercanapprove">Membercanapprove</option>
+        <option value="member">Member</option>
+        <option value="membercanapprove">Membercanapprove</option>
       </select>
 
     {(row.status === "Approved from Member_can_approve" || row.status === "done") && (

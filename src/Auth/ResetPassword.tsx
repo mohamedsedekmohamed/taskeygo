@@ -27,7 +27,7 @@ const ResetPassword = () => {
 
     try {
       await axios.post(
-        "https://taskatbcknd.wegostation.com/api/user/auth/local/resetPassword",
+        "https://taskatbcknd.wegostation.com/api/user/auth/local/reset-password",
         {
           email,
           newPassword,

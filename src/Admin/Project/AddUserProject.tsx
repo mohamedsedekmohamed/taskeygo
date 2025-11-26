@@ -16,7 +16,7 @@ interface UserProject {
   _id?: string; 
   email: string;
   project_id: string;
-  role: "teamlead" | "Member" | "Membercanapprove"|"admin";
+  role: "teamlead" | "member" | "membercanapprove"|"admin";
 }
 
 const AddUserProject: React.FC = () => {
@@ -55,7 +55,7 @@ const AddUserProject: React.FC = () => {
   };
 
   const handleRoleChange = (value: string) => {
-    setFormData((prev) => ({ ...prev, role: value as "teamlead" | "Member" | "Membercanapprove"|"admin"}));
+    setFormData((prev) => ({ ...prev, role: value as "teamlead" | "member" | "membercanapprove"|"admin"}));
   };
 
   const handleSave = async () => {
@@ -123,9 +123,9 @@ const AddUserProject: React.FC = () => {
           onChange={handleRoleChange}
           options={[
             { id: "teamlead", name: t("teamlead") },
-            { id: "Member", name: t("Member") },
+            { id: "member", name: t("Member") },
             { id: "admin", name: t("admin") },
-            { id: "Membercanapprove", name: t("Membercanapprove") },
+            { id: "membercanapprove", name: t("Membercanapprove") },
           ]}
         />
 
