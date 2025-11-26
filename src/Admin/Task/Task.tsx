@@ -67,7 +67,7 @@ const Task: React.FC = () => {
         `https://taskatbcknd.wegostation.com/api/admin/tasks/${row._id}`
       );
 
-      if (res && (res as any).success !== false) {
+      if (res && (res).success !== false) {
         toast.success(t("TaskDeletedSuccessfully"));
         get("https://taskatbcknd.wegostation.com/api/admin/tasks");
       } else {

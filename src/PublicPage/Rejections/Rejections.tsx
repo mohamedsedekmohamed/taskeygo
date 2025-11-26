@@ -8,7 +8,7 @@ const Rejections = () => {
   useEffect(() => {
     const fetchRejections = async () => {
       try {
-        const token = localStorage.getItem("token"); // لو انت مخزن التوكن في localStorage
+        const token = localStorage.getItem("token");
 
         const res = await axios.get(
           "https://taskatbcknd.wegostation.com/api/user/user-rejections",

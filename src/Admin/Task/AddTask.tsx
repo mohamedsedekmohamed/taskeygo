@@ -16,16 +16,29 @@ interface Option {
   name: string;
 }
 
-interface ProjectData {
-  _id?: string;
-  name: string;
-  description: string;
-}
+// interface ProjectData {
+//   _id?: string;
+//   name: string;
+//   description: string;
+// }
 interface ProjectsResponse {
   projects: Option[];
 }
 interface ProjectsResponses {
   data: Option[];
+}
+interface TaskResponse {
+  task: {
+    _id?: string;
+    name: string;
+    description: string;
+    projectId?: { _id: string; name: string };
+    Depatment_id?: { _id: string; name: string };
+    priority?: "low" | "medium" | "high";
+    end_date?: string;
+    recorde?: string;
+    file?: string;
+  };
 }
 
 const AddTask: React.FC = () => {
@@ -39,7 +52,7 @@ const AddTask: React.FC = () => {
   const { put, loading: putLoading } = usePut();
 const { get: getOptions } = useGet<ProjectsResponse>();
 const { get: getOptionss } = useGet<ProjectsResponses>();
-  const { get: getTask } = useGet<ProjectData>();
+const { get: getTask } = useGet<TaskResponse>();
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -92,7 +105,9 @@ const { get: getOptionss } = useGet<ProjectsResponses>();
             );
 
             setEndDate(task.end_date ? task.end_date.split("T")[0] : "");
-            setRecorde(task.recorde || "");
+      if(task.recorde) {  
+        setRecorde(task.recorde || "");
+      } 
 
             if (task.file) setFile(null);
           }

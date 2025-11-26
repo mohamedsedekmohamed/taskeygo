@@ -27,7 +27,7 @@ const UserProject: React.FC = () => {
   const { searchQuery } = useSearchStore();
   const { t } = useTranslation();
   const { theme } = useTheme();
-  const { data, loading, error, get } = useGet<{ users: UserType[] }>();
+  const { data, loading, error, get } = useGet< UserType[] >();
   const { del } = useDelete();
   const nav = useNavigate();
   const location = useLocation();
@@ -53,7 +53,7 @@ const UserProject: React.FC = () => {
 
     if (result.isConfirmed) {
       const res = await del(`https://taskatbcknd.wegostation.com/api/admin/user-project/${row.user_id._id}/${projectId}`);
-      if (res && (res as any).success !== false) {
+      if (res && (res).success !== false) {
         toast.success(t("User deleted successfully"));
         get(`https://taskatbcknd.wegostation.com/api/admin/user-project/${projectId}`);
       } else {

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import  { useEffect, useMemo, useState } from "react";
 import Table from "../../Ui/Table";
 import { useTheme } from "../../Hooks/ThemeContext";
 import useGet from "../../Hooks/useGet";
@@ -16,9 +16,11 @@ import {
   AiOutlineGlobal,
 } from "react-icons/ai";
 
-// =========================
-//      TYPES
-// =========================
+interface InfoCardProps {
+icon: React.ReactElement;
+  label: string;
+  value: string | number | undefined | null;
+}
 
 interface SubscriptionType {
   _id: string;
@@ -49,16 +51,12 @@ interface SubscriptionResponse {
     data: SubscriptionType[];
 }
 
-interface InfoCardProps {
-  icon: JSX.Element;
-  label: string;
-  value: string | number | undefined | null;
-}
+
 
 interface TableColumn<T> {
   key: string;
   label: string;
-  render?: (value: any, row: T) => JSX.Element | string | number;
+  render?: (value: any, row: T) => React.ReactElement | string | number;
 }
 
 
@@ -221,11 +219,7 @@ const Subscriptions: React.FC = () => {
 
 export default Subscriptions;
 
-interface InfoCardProps {
-  icon: JSX.Element;
-  label: string;
-  value: string | number | undefined | null;
-}
+
 
 const InfoCard: React.FC<InfoCardProps> = ({ icon, label, value }) => (
   <div className="flex items-center gap-3 p-3 transition-colors bg-gray-100 cursor-default rounded-xl dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600">

@@ -6,7 +6,7 @@ import InputArrow from "../../Ui/InputArrow";
 import ButtonDone from "../../Ui/ButtonDone";
 import usePost from "../../Hooks/usePost";
 import usePut from "../../Hooks/usePut";
-import useGet from "../../Hooks/useGet";
+// import useGet from "../../Hooks/useGet";
 import Loading from "../../Component/Loading";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
@@ -29,7 +29,7 @@ const AddUserProject: React.FC = () => {
   const isEdit = !!row;
 
     
-  const { get: getData } = useGet<{ userProject: UserProject }>();
+  // const { get } = useGet<{ userProject: UserProject }>();
   const { post, loading: postLoading } = usePost();
   const { put, loading: putLoading } = usePut();
 
