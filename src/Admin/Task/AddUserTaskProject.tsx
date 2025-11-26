@@ -10,9 +10,7 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 import Select from "react-select";
-// import type { MultiValue } from "react-select";
 import makeAnimated from "react-select/animated";
-// import { useTheme } from "../../Hooks/ThemeContext";
 
 interface UserTask {
   _id?: string;
@@ -34,10 +32,8 @@ interface UserReasons {
   id: string;
   name: string;
 }
-interface UserReasonss {
-  user_id:{
-    id:string;
-  };
+interface UserReasons {
+  id: string;
   name: string;
 }
 
@@ -61,7 +57,7 @@ const AddUserTaskProject: React.FC = () => {
   });
 
   const [options, setOptions] = useState<UserOption[]>([]);
-  const [usertask, setUsertask] = useState<UserReasonss[]>([]);
+const [usertask, setUsertask] = useState<UserReasons[]>([]);
   const token = localStorage.getItem("token") || "";
 
   useEffect(() => {
@@ -163,7 +159,10 @@ const AddUserTaskProject: React.FC = () => {
   closeMenuOnSelect={false}
   components={animatedComponents}
   
-  options={usertask.map((user) => ({ value: user.id, label: user.name }))}
+options={usertask.map((user) => ({
+  value: user.id,
+  label: user.name
+}))}
    value={usertask
   .filter(u => formData.User_taskId && formData.User_taskId.includes(u.id))
   .map(u => ({ value: u.id, label: u.name }))}

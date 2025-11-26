@@ -42,7 +42,8 @@ const Rejections = () => {
         <ul>
           {data.map((item, index) => (
             <li key={index}>
-              {item.reason || "No reason available"}
+              {/* {item.reason || "No reason available"} */}
+              {item || "No reason available"}
             </li>
           ))}
         </ul>

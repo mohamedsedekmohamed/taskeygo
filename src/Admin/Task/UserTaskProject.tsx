@@ -20,6 +20,8 @@ interface UserInfo {
 }
 
 interface UserTaskItem {
+    _id: string;
+
   userTaskId: string;
   is_finished:boolean;
 roleInsideTask:string
