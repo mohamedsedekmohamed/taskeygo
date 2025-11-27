@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { UserCircle, Mail, Calendar, ClipboardList, Folder, Check, AlertCircle, Search, Filter } from "lucide-react";
 import Loader from "../../Component/Loading";
 import { FaUsers, FaTasks, FaCheckCircle, FaClock, FaFlagCheckered } from 'react-icons/fa';
-
+import ButtonDown from "../../Ui/ButtonDown";
 
 interface User {
   _id: string;
@@ -28,6 +28,7 @@ interface Task {
   end_date: string;
   priority: string;
   status: string;
+  file:string
     projectId?: string; // ← أضف هذا
 
 }
@@ -399,6 +400,12 @@ placeholder="Search for a task..."
                         <p className="mb-4 text-sm text-gray-600 line-clamp-3">
                           {task.task_id?.description ?? 'N/A'}
                         </p>
+       {task.task_id?.file && (
+ <ButtonDown file={task.task_id?.file} />
+
+)}
+
+
 
                         <div className="mb-6 space-y-3">
                           <div className="flex items-center gap-2 text-sm">
@@ -421,6 +428,7 @@ placeholder="Search for a task..."
                               {task.status}
                             </span>
                           </div>
+                      
                         </div>
 <button
   onClick={() => {

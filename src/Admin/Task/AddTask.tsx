@@ -211,15 +211,15 @@ if (description.trim().length < 5) {
     if (projectId) formData.append("projectId", projectId);
     if (department) formData.append("Depatment_id", department);
     if (end_date) formData.append("end_date", end_date);
+     if (file)formData.append("file", file);
 
-  
   
     if (audioURL) {
       const blob = await fetch(audioURL).then(r => r.blob());
       formData.append("recorde", blob, "record.webm");
     }
 
-    if (recorde) formData.append("recordeText", recorde);
+    if (recorde) formData.append("recorde", recorde);
 
     const url = isEdit
       ? `https://taskatbcknd.wegostation.com/api/admin/tasks/${TaskId}`

@@ -13,6 +13,7 @@ import { useTranslation } from "react-i18next";
 interface ProjectData {
   _id?: string;
   name: string;
+  createdBy: string;
   description: string;
 }
 
@@ -30,6 +31,7 @@ const AddProject: React.FC = () => {
   const [formData, setFormData] = useState<ProjectData>({
     name: "",
     description: "",
+    createdBy: "",
   });
 
   const [loadingData, setLoadingData] = useState(false);
@@ -47,6 +49,7 @@ const AddProject: React.FC = () => {
             setFormData({
               name: res.project.name,
               description: res.project.description,
+              createdBy: res.project.createdBy,
             });
           }
         } catch {
@@ -71,10 +74,13 @@ const AddProject: React.FC = () => {
     if (!formData.name.trim()) return toast.error(t("Pleaseenterprojectname"));
     if (!formData.description.trim())
       return toast.error(t("Pleaseenterprojectdescription"));
+    // if (!formData.description.trim())
+    //   return toast.error(t("Pleaseenterprojectdescription"));
 
     const payload = {
       name: formData.name,
       description: formData.description,
+      createdBy: formData.createdBy,
     };
 
     try {

@@ -17,15 +17,19 @@ interface RejectedReasonType {
   points: number;
   createdAt: string;
 }
+interface RejectedReasonsResponse {
+  success: boolean;
+  message: string;
+  data: RejectedReasonType[];
+}
 
 const Rejected: React.FC = () => {
   const { searchQuery } = useSearchStore();
   const { t } = useTranslation();
   const { theme } = useTheme();
-  const { data, loading, error, get } = useGet<{ RejectedResons: RejectedReasonType[] }>();
+const { data, loading, error, get } = useGet<RejectedReasonsResponse>();
   const { del } = useDelete();
   const nav = useNavigate();
-
   useEffect(() => {
     get("https://taskatbcknd.wegostation.com/api/admin/rejected-reasons");
   }, [get]);
@@ -82,12 +86,16 @@ const Rejected: React.FC = () => {
     },
   ];
 
-  const filteredReasons = useMemo(() => {
-    if (!searchQuery || !data?.RejectedResons) return data?.RejectedResons;
-    return data.RejectedResons.filter((r) =>
-      r.reason.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  }, [data, searchQuery]);
+const filteredReasons = useMemo(() => {
+  const list = data?.data || [];
+
+  if (!searchQuery) return list;
+
+  return list.filter((r) =>
+    r.reason.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+}, [data, searchQuery]);
+
 
   if (loading) return <Loading />;
 
@@ -99,13 +107,14 @@ const Rejected: React.FC = () => {
 
       {error && <p className="text-red-500">{t("FailedToLoadRejectedReasons")}</p>}
 
-      {filteredReasons && filteredReasons.length > 0 ? (
-        <Table<RejectedReasonType> columns={columns} data={filteredReasons} />
-      ) : (
-        <p className={theme === "dark" ? "text-gray-400" : "text-gray-500"}>
-          {t("NoRejectedReasonsFound")}
-        </p>
-      )}
+   {filteredReasons && filteredReasons.length > 0 ? (
+  <Table<RejectedReasonType> columns={columns} data={filteredReasons} />
+) : (
+  <p className={theme === "dark" ? "text-gray-400" : "text-gray-500"}>
+    {t("NoRejectedReasonsFound")}
+  </p>
+)}
+
     </div>
   );
 };

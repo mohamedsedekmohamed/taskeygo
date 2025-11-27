@@ -53,12 +53,11 @@ const UserTaskProject: React.FC = () => {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
-        const Reasons: UserReasons[] = (res.data.data?.RejectedResons || []).map((item: { _id: string; reason?: string; points?: string }) => ({
+        const Reasons: UserReasons[] = (res.data.data?.data || []).map((item: { _id: string; reason?: string; points?: string }) => ({
           _id: item._id,
           reason: item.reason || "Unknown User",
           points: item.points || "Unknown User",
         }));
-        console.log(Reasons)
         setOption(Reasons);
       })
       .catch((err) => console.error(err));
