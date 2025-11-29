@@ -6,58 +6,99 @@ import Loader from "../../Component/Loading";
 import { FaUsers, FaTasks, FaCheckCircle, FaClock, FaFlagCheckered } from 'react-icons/fa';
 import ButtonDown from "../../Ui/ButtonDown";
 
-interface User {
+// Interfaces
+export interface IUser {
   _id: string;
   name: string;
   email: string;
   role: string;
 }
 
-interface Member {
+export interface IProjectMember {
   _id: string;
   email: string;
-  user_id: User;
+  user_id: IUser;
+  project_id: string;
   role: string;
-  createdAt: string;
-}
-
-interface Task {
-  _id: string;
-  name: string;
-  description: string;
-  end_date: string;
-  priority: string;
-  status: string;
-  file:string
-    projectId?: string; // ← أضف هذا
-
-}
-
-interface TaskData {
-  _id: string;
-  user_id: string;
-  task_id: Task | null;
-  status: string;
-  projectId: string; 
-  is_finished: boolean;
-  role: string;
-  createdAt: string;
-}
-
-interface ProjectDetails {
-  _id: string;
-  name: string;
-  description: string;
   createdAt: string;
   updatedAt: string;
 }
 
+export interface ISubTask {
+  _id: string;
+  user_id: string;
+  task_id: {
+    _id: string;
+    name: string;
+    end_date: string;
+    priority: string;
+    status: string;
+  };
+  status: string;
+  is_finished: boolean;
+  role: string;
+  User_taskId: any[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ITaskInfo {
+  _id: string;
+  name: string;
+  description: string;
+  projectId: string;
+  end_date: string;
+  priority: string;
+  status: string;
+  recorde: string | null;
+  file: string | null;
+  Depatment_id: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface IUserTask {
+  _id: string;
+  user_id: string;
+  task_id: ITaskInfo | null;
+  status: string;
+  is_finished: boolean;
+  role: string;
+  User_taskId: ISubTask[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface IProjectDetails {
+  _id: string;
+  name: string;
+  description: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface IProjectAPIResponse {
+  success: boolean;
+  data: {
+    message: string;
+    project: IProjectDetails;
+    members: IProjectMember[];
+    tasks: IUserTask[];
+  };
+}
+
+// Component
 const ProjectId: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [project, setProject] = useState<ProjectDetails | null>(null);
-  const [members, setMembers] = useState<Member[]>([]);
-  const [tasks, setTasks] = useState<TaskData[]>([]);
-  const [filteredTasks, setFilteredTasks] = useState<TaskData[]>([]);
+  const [project, setProject] = useState<IProjectDetails | null>(null);
+  const [members, setMembers] = useState<IProjectMember[]>([]);
+  const [tasks, setTasks] = useState<IUserTask[]>([]);
+
+  // ✅ تم التعديل هنا
+  const [filteredTasks, setFilteredTasks] = useState<IUserTask[]>([]);
+
   const [loading, setLoading] = useState(true);
 
   const nav = useNavigate();
@@ -78,7 +119,7 @@ const ProjectId: React.FC = () => {
           setProject(response.data.data.project);
           setMembers(response.data.data.members);
           setTasks(response.data.data.tasks);
-          setFilteredTasks(response.data.data.tasks);
+          setFilteredTasks(response.data.data.tasks); // نفس النوع
         }
       } catch (error) {
         console.error("Error fetching project details:", error);
@@ -93,7 +134,7 @@ const ProjectId: React.FC = () => {
   // Filter tasks
   useEffect(() => {
     let tempTasks = [...tasks];
-    
+
     if (searchText.trim() !== "") {
       tempTasks = tempTasks.filter(task => {
         if (!task.task_id) return false;
@@ -103,22 +144,22 @@ const ProjectId: React.FC = () => {
         );
       });
     }
-    
+
     if (priorityFilter) {
-      tempTasks = tempTasks.filter(task => 
+      tempTasks = tempTasks.filter(task =>
         task.task_id && task.task_id.priority === priorityFilter
       );
     }
-    
+
     if (statusFilter) {
       tempTasks = tempTasks.filter(task => task.status === statusFilter);
     }
-    
+
     setFilteredTasks(tempTasks);
   }, [searchText, priorityFilter, statusFilter, tasks]);
 
   const formatDate = (dateString: string) =>
-    new Date(dateString).toLocaleDateString("ar-EG", {
+    new Date(dateString).toLocaleDateString("en-EG", {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -161,13 +202,12 @@ const ProjectId: React.FC = () => {
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
         <div className="text-center">
           <AlertCircle className="w-16 h-16 mx-auto mb-4 text-red-500" />
-          <p className="text-xl text-gray-700">  Project is not found</p>
+          <p className="text-xl text-gray-700">Project is not found</p>
         </div>
       </div>
     );
   }
 
-  // احصائيات المشروع
   const stats = {
     totalTasks: tasks.length,
     validTasks: tasks.filter(t => t.task_id !== null).length,
@@ -175,7 +215,6 @@ const ProjectId: React.FC = () => {
     pendingTasks: tasks.filter(t => t.status === "pending").length,
     totalMembers: members.length
   };
-
   return (
     <div className="min-h-screen ">
       {/* Header Section */}
@@ -186,7 +225,7 @@ const ProjectId: React.FC = () => {
             <Folder className="w-12 h-12 text-black" />
           </div>
           <h1 className="text-4xl font-extrabold text-center text-black bg-clip-text ">
-            {project.name}
+            {project.name} 
           </h1>
           <p className="max-w-3xl mx-auto mt-4 text-lg text-center text-gray-600">
             {project.description}
@@ -350,27 +389,37 @@ placeholder="Search for a task..."
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {filteredTasks.map((task, index) => {
-                const hasTaskData = task.task_id !== null;
-                
+{filteredTasks.map((task, index) => {
+ const isIndependent =
+    Array.isArray(task.User_taskId) && task.User_taskId.length === 0;
+
+  const isDependent =
+    Array.isArray(task.User_taskId) && task.User_taskId.length > 0;
+
+  const dependencyFinished =
+    isDependent && task.User_taskId[0].is_finished === true;
+
+  const shouldShowTask = isIndependent || dependencyFinished;
+
+
                 return (
                   <div
                     key={task._id}
                     className={`relative p-6 transition-all duration-300 shadow-lg group rounded-2xl hover:-translate-y-1 ${
-                      hasTaskData 
+                      shouldShowTask 
                         ? 'bg-white hover:shadow-2xl' 
                         : 'bg-gray-100 border-2 border-dashed border-gray-300'
                     }`}
                   >
                     {/* Task Header */}
                     <div className={`absolute top-0 left-0 w-full h-1 ${
-                      hasTaskData 
+                      shouldShowTask 
                         ? (index % 3 === 0 ? 'bg-blue-500' : 
                            index % 3 === 1 ? 'bg-purple-500' : 'bg-green-500')
                         : 'bg-gray-400'
                     }`}></div>
 
-                    {!hasTaskData ? (
+                    {!shouldShowTask ? (
                    <div  className="text-center">
   <AlertCircle className="w-12 h-12 mx-auto mb-3 text-gray-400" />
   <h3 className="mb-2 text-lg font-bold text-gray-600">Incomplete Task</h3>
@@ -397,7 +446,7 @@ placeholder="Search for a task..."
                           </div>
                         </div>
 
-                        <p className="mb-4 text-sm text-gray-600 line-clamp-3">
+                        <p className="py-3 mb-4 text-sm text-gray-600 line-clamp-3">
                           {task.task_id?.description ?? 'N/A'}
                         </p>
        {task.task_id?.file && (
@@ -407,11 +456,11 @@ placeholder="Search for a task..."
 
 
 
-                        <div className="mb-6 space-y-3">
+                        <div className="my-3 mb-6 space-y-3 ">
                           <div className="flex items-center gap-2 text-sm">
                             <Calendar className="w-4 h-4 text-gray-500" />
                             <span className="text-gray-600">
-                              {task.task_id?.end_date ? formatDate(task.task_id.end_date) : 'N/A'}
+                      End Date      {task.task_id?.end_date ? formatDate(task.task_id.end_date) : 'N/A'}
                             </span>
                           </div>
 

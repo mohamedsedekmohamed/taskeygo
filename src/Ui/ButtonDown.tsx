@@ -7,7 +7,7 @@ const ButtonDown = ({ file }: { file: string | undefined }) => {
     <StyledWrapper>
       <a
         href={file}
-        target="_blank"
+download
         rel="noopener noreferrer"
         className="button"
       >
@@ -31,13 +31,14 @@ const ButtonDown = ({ file }: { file: string | undefined }) => {
 const StyledWrapper = styled.div`
   .button {
     position: relative;
+    
     width: 150px;
     height: 40px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    border: 1px solid #17795E;
-    background-color: #209978;
+    border: 1px solid #000;
+    background-color: #000;
     overflow: hidden;
   }
 
@@ -58,7 +59,7 @@ const StyledWrapper = styled.div`
     transform: translateX(109px);
     height: 100%;
     width: 39px;
-    background-color: #17795E;
+    background-color: #000;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -70,7 +71,7 @@ const StyledWrapper = styled.div`
   }
 
   .button:hover {
-    background: #17795E;
+    background: #fff;
   }
 
   .button:hover .button__text {
@@ -80,15 +81,21 @@ const StyledWrapper = styled.div`
   .button:hover .button__icon {
     width: 148px;
     transform: translateX(0);
+    background-color: #fff;
+  }
+
+  .button:hover .svg {
+    fill: #000;
   }
 
   .button:active .button__icon {
-    background-color: #146c54;
+    background-color: #e6e6e6;
   }
 
   .button:active {
-    border: 1px solid #146c54;
+    border: 1px solid #e6e6e6;
   }
 `;
+
 
 export default ButtonDown;
