@@ -16,67 +16,67 @@ export interface IUser {
 
 export interface IProjectMember {
   _id: string;
-  email?: string;
-  user_id?: IUser;
-  project_id?: string;
-  role?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  email: string;
+  user_id: IUser;
+  project_id: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ISubTask {
   _id: string;
-  user_id?: string;
-  task_id?: {
-    _id?: string;
-    name?: string;
-    end_date?: string;
-    priority?: string;
-    status?: string;
+  user_id: string;
+  task_id: {
+    _id: string;
+    name: string;
+    end_date: string;
+    priority: string;
+    status: string;
   };
-  status?: string;
-  is_finished?: boolean;
-  role?: string;
-  User_taskId?: any[];
-  createdAt?: string;
-  updatedAt?: string;
+  status: string;
+  is_finished: boolean;
+  role: string;
+  User_taskId: any[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ITaskInfo {
   _id: string;
-  name?: string;
-  description?: string;
-  projectId?: string;
-  end_date?: string;
-  priority?: string;
-  status?: string;
-  recorde?: string | null;
-  file?: string | null;
-  Depatment_id?: string;
-  createdBy?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  name: string;
+  description: string;
+  projectId: string;
+  end_date: string;
+  priority: string;
+  status: string;
+  recorde: string | null;
+  file: string | null;
+  Depatment_id: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface IUserTask {
   _id: string;
-  user_id?: string;
-  task_id?: ITaskInfo | null;
-  status?: string;
-  is_finished?: boolean;
-  role?: string;
-  User_taskId?: ISubTask[];
-  createdAt?: string;
-  updatedAt?: string;
+  user_id: string;
+  task_id: ITaskInfo | null;
+  status: string;
+  is_finished: boolean;
+  role: string;
+  User_taskId: ISubTask[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface IProjectDetails {
   _id: string;
-  name?: string;
-  description?: string;
-  createdBy?: string;
-  createdAt?: string;
-  updatedAt?: string;
+  name: string;
+  description: string;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface IProjectAPIResponse {
@@ -95,7 +95,10 @@ const ProjectId: React.FC = () => {
   const [project, setProject] = useState<IProjectDetails | null>(null);
   const [members, setMembers] = useState<IProjectMember[]>([]);
   const [tasks, setTasks] = useState<IUserTask[]>([]);
+
+  // ✅ تم التعديل هنا
   const [filteredTasks, setFilteredTasks] = useState<IUserTask[]>([]);
+
   const [loading, setLoading] = useState(true);
 
   const nav = useNavigate();
@@ -113,10 +116,10 @@ const ProjectId: React.FC = () => {
         );
 
         if (response.data.success) {
-          setProject(response.data.data.project ?? null);
-          setMembers(response.data.data.members ?? []);
-          setTasks(response.data.data.tasks ?? []);
-          setFilteredTasks(response.data.data.tasks ?? []);
+          setProject(response.data.data.project);
+          setMembers(response.data.data.members);
+          setTasks(response.data.data.tasks);
+          setFilteredTasks(response.data.data.tasks); // نفس النوع
         }
       } catch (error) {
         console.error("Error fetching project details:", error);
@@ -134,14 +137,18 @@ const ProjectId: React.FC = () => {
 
     if (searchText.trim() !== "") {
       tempTasks = tempTasks.filter(task => {
-        const name = task.task_id?.name ?? "";
-        const desc = task.task_id?.description ?? "";
-        return name.toLowerCase().includes(searchText.toLowerCase()) || desc.toLowerCase().includes(searchText.toLowerCase());
+        if (!task.task_id) return false;
+        return (
+          task.task_id.name?.toLowerCase().includes(searchText.toLowerCase()) ||
+          task.task_id.description?.toLowerCase().includes(searchText.toLowerCase())
+        );
       });
     }
 
     if (priorityFilter) {
-      tempTasks = tempTasks.filter(task => task.task_id?.priority === priorityFilter);
+      tempTasks = tempTasks.filter(task =>
+        task.task_id && task.task_id.priority === priorityFilter
+      );
     }
 
     if (statusFilter) {
@@ -151,10 +158,14 @@ const ProjectId: React.FC = () => {
     setFilteredTasks(tempTasks);
   }, [searchText, priorityFilter, statusFilter, tasks]);
 
-  const formatDate = (dateString?: string) =>
-    dateString ? new Date(dateString).toLocaleDateString("en-EG", { year: "numeric", month: "long", day: "numeric" }) : "Unknown Date";
+  const formatDate = (dateString: string) =>
+    new Date(dateString).toLocaleDateString("en-EG", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
 
-  const getPriorityColor = (priority?: string) => {
+  const getPriorityColor = (priority: string) => {
     switch (priority?.toLowerCase()) {
       case "high": return "bg-red-500";
       case "medium": return "bg-yellow-500";
@@ -163,7 +174,7 @@ const ProjectId: React.FC = () => {
     }
   };
 
-  const getStatusColor = (status?: string) => {
+  const getStatusColor = (status: string) => {
     switch (status?.toLowerCase()) {
       case "completed": return "bg-green-600";
       case "approved": return "bg-blue-600";
@@ -173,7 +184,7 @@ const ProjectId: React.FC = () => {
     }
   };
 
-  const getRoleColor = (role?: string) => {
+  const getRoleColor = (role: string) => {
     if (role?.toLowerCase().includes("lead")) return "bg-purple-600";
     if (role?.toLowerCase().includes("approve")) return "bg-blue-600";
     return "bg-gray-700";
@@ -204,7 +215,6 @@ const ProjectId: React.FC = () => {
     pendingTasks: tasks.filter(t => t.status === "pending").length,
     totalMembers: members.length
   };
-
   return (
     <div className="min-h-screen ">
       {/* Header Section */}
@@ -215,10 +225,10 @@ const ProjectId: React.FC = () => {
             <Folder className="w-12 h-12 text-black" />
           </div>
           <h1 className="text-4xl font-extrabold text-center text-black bg-clip-text ">
-            {project.name ?? "Unnamed Project"}
+            {project.name} 
           </h1>
           <p className="max-w-3xl mx-auto mt-4 text-lg text-center text-gray-600">
-            {project.description ?? "No Description"}
+            {project.description}
           </p>
           <p className="mt-2 text-sm text-center text-gray-500">
             تم الإنشاء في: {formatDate(project.createdAt)}
@@ -227,79 +237,84 @@ const ProjectId: React.FC = () => {
       </div>
 
       <div className="px-4 py-12 mx-auto max-w-7xl">
-        {/* Stats Section */}
-        <div className="grid grid-cols-2 gap-4 mb-12 md:grid-cols-5">
-          <div className="p-6 text-center transition-transform duration-300 bg-white shadow-lg rounded-2xl hover:scale-105">
-            <FaUsers className="mx-auto text-4xl text-black animate-bounce" />
-            <div className="mt-2 text-3xl font-bold text-black">{stats.totalMembers}</div>
-            <div className="mt-1 text-sm text-gray-600">Total Members</div>
-          </div>
-          <div className="p-6 text-center transition-transform duration-300 bg-white shadow-lg rounded-2xl hover:scale-105">
-            <FaTasks className="mx-auto text-4xl text-black animate-pulse" />
-            <div className="mt-2 text-3xl font-bold text-black">{stats.totalTasks}</div>
-            <div className="mt-1 text-sm text-gray-600">Total Tasks</div>
-          </div>
-          <div className="p-6 text-center transition-transform duration-300 bg-white shadow-lg rounded-2xl hover:scale-105">
-            <FaCheckCircle className="mx-auto text-4xl text-black animate-bounce" />
-            <div className="mt-2 text-3xl font-bold text-black">{stats.validTasks}</div>
-            <div className="mt-1 text-sm text-gray-600">Valid Tasks</div>
-          </div>
-          <div className="p-6 text-center transition-transform duration-300 bg-white shadow-lg rounded-2xl hover:scale-105">
-            <FaClock className="mx-auto text-4xl text-black animate-pulse" />
-            <div className="mt-2 text-3xl font-bold text-black">{stats.pendingTasks}</div>
-            <div className="mt-1 text-sm text-gray-600">Pending</div>
-          </div>
-          <div className="p-6 text-center transition-transform duration-300 bg-white shadow-lg rounded-2xl hover:scale-105">
-            <FaFlagCheckered className="mx-auto text-4xl text-black animate-bounce" />
-            <div className="mt-2 text-3xl font-bold text-black">{stats.completedTasks}</div>
-            <div className="mt-1 text-sm text-gray-600">Completed</div>
-          </div>
-        </div>
+        
+
+<div className="grid grid-cols-2 gap-4 mb-12 md:grid-cols-5">
+  <div className="p-6 text-center transition-transform duration-300 bg-white shadow-lg rounded-2xl hover:scale-105">
+    <FaUsers className="mx-auto text-4xl text-black animate-bounce" />
+    <div className="mt-2 text-3xl font-bold text-black">{stats.totalMembers}</div>
+    <div className="mt-1 text-sm text-gray-600">Total Members</div>
+  </div>
+  
+  <div className="p-6 text-center transition-transform duration-300 bg-white shadow-lg rounded-2xl hover:scale-105">
+    <FaTasks className="mx-auto text-4xl text-black animate-pulse" />
+    <div className="mt-2 text-3xl font-bold text-black">{stats.totalTasks}</div>
+    <div className="mt-1 text-sm text-gray-600">Total Tasks</div>
+  </div>
+  
+  <div className="p-6 text-center transition-transform duration-300 bg-white shadow-lg rounded-2xl hover:scale-105">
+    <FaCheckCircle className="mx-auto text-4xl text-black animate-bounce" />
+    <div className="mt-2 text-3xl font-bold text-black">{stats.validTasks}</div>
+    <div className="mt-1 text-sm text-gray-600">Valid Tasks</div>
+  </div>
+  
+  <div className="p-6 text-center transition-transform duration-300 bg-white shadow-lg rounded-2xl hover:scale-105">
+    <FaClock className="mx-auto text-4xl text-black animate-pulse" />
+    <div className="mt-2 text-3xl font-bold text-black">{stats.pendingTasks}</div>
+    <div className="mt-1 text-sm text-gray-600">Pending</div>
+  </div>
+  
+  <div className="p-6 text-center transition-transform duration-300 bg-white shadow-lg rounded-2xl hover:scale-105">
+    <FaFlagCheckered className="mx-auto text-4xl text-black animate-bounce" />
+    <div className="mt-2 text-3xl font-bold text-black">{stats.completedTasks}</div>
+    <div className="mt-1 text-sm text-gray-600">Completed</div>
+  </div>
+</div>
+
 
         {/* Members Section */}
         <div className="mb-12">
           <h2 className="mb-6 text-3xl font-bold text-gray-800">
-            Project Members
+Project Members
             <span className="ml-2 text-lg text-gray-500">({members.length})</span>
           </h2>
           {members.length === 0 ? (
             <div className="p-12 text-center bg-white shadow-lg rounded-2xl">
               <UserCircle className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-              <p className="text-gray-500">No members added yet</p>
+<p className="text-gray-500">No members added yet</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {members.map((member, index) => (
                 <div
-                  key={member._id ?? index}
+                  key={member._id}
                   className="relative p-6 overflow-hidden transition-all duration-300 bg-white shadow-lg group rounded-2xl hover:shadow-2xl hover:-translate-y-1"
                 >
                   <div className={`absolute top-0 left-0 w-full h-1 ${
-                    index % 3 === 0 ? 'bg-blue-500' : index % 3 === 1 ? 'bg-purple-500' : 'bg-green-500'
+                    index % 3 === 0 ? 'bg-blue-500' : 
+                    index % 3 === 1 ? 'bg-purple-500' : 'bg-green-500'
                   }`}></div>
-
+                  
                   <div className="flex items-center gap-3 mb-4">
                     <div className="p-3 bg-blue-100 rounded-full">
                       <UserCircle className="w-6 h-6 text-blue-600" />
                     </div>
-                    <span className="text-lg font-bold text-gray-800">
-                      {member.user_id?.name ?? "Unknown User"}
-                    </span>
+                    <span className="text-lg font-bold text-gray-800">{member.user_id.name}</span>
                   </div>
-
+                  
                   <div className="space-y-3">
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <Mail className="w-4 h-4" />
-                      <span className="truncate">{member.email ?? "Unknown Email"}</span>
+                      <span className="truncate">{member.email}</span>
                     </div>
-
+                    
                     <div className="flex items-center gap-2">
                       <ClipboardList className="w-4 h-4 text-gray-500" />
                       <span className={`px-3 py-1 text-xs font-semibold text-white rounded-full ${getRoleColor(member.role)}`}>
-                        {member.role ?? "Unknown Role"}
+                        {member.role}
                       </span>
                     </div>
-
+                    
                     <div className="flex items-center gap-2 text-xs text-gray-500">
                       <Calendar className="w-4 h-4" />
                       <span>Join: {formatDate(member.createdAt)}</span>
@@ -471,6 +486,7 @@ placeholder="Search for a task..."
     }
   }}
   className="w-full py-3 font-semibold text-white transition-all duration-300 transform bg-black rounded-xl hover:scale-105"
+  // disabled={!task?.task_id?.projectId}
 >
   View Details
 </button>

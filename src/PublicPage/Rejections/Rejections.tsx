@@ -5,22 +5,22 @@ import { FaUser, FaExclamationTriangle, FaCalendarAlt, FaStar } from "react-icon
 import { MdOutlineAttachEmail } from "react-icons/md";
 import Loader from "../../Component/Loading";
 
- interface Rejection {
+interface Rejection {
   _id: string;
-  userId: {
-    _id: string;
-    name: string;
-    email: string;
+  userId?: {
+    _id?: string;
+    name?: string;
+    email?: string;
   };
-  reasonId: {
-    _id: string;
-    reason: string;
-    points: number;
+  reasonId?: {
+    _id?: string;
+    reason?: string;
+    points?: number;
   };
-  taskId: string | null;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
+  taskId?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+  __v?: number;
 }
 
 const Rejections = () => {
@@ -38,7 +38,7 @@ const Rejections = () => {
           }
         );
 
-        setData(res.data.data.userRejection || []);
+        setData(res.data.data.userRejection ?? []);
       } catch (error) {
         console.error("Error fetching rejections:", error);
       } finally {
@@ -82,86 +82,94 @@ const Rejections = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {data.map((item, index) => (
-              <div
-                key={item._id}
-                className="p-6 transition-all duration-300 transform bg-white border-2 border-gray-200 group rounded-2xl hover:border-black hover:shadow-2xl hover:-translate-y-2 animate-fadeInUp"
-                style={{ animationDelay: `${index * 50}ms` }}
-              >
-                {/* Card Header */}
-                <div className="pb-4 mb-4 border-b-2 border-gray-100">
-                  <div className="flex items-start gap-3">
-                    <div className="flex items-center justify-center flex-shrink-0 w-12 h-12 transition-transform duration-300 bg-black rounded-full group-hover:scale-110">
-                      <FaUser className="text-xl text-white" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-xl font-bold text-gray-900 truncate">
-                        {item.userId.name}
-                      </h3>
-                      <div className="flex items-center gap-2 mt-1">
-                        <MdOutlineAttachEmail className="flex-shrink-0 text-gray-400" />
-                        <p className="text-sm text-gray-500 truncate">
-                          {item.userId.email}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+            {data.map((item, index) => {
+              const userName = item.userId?.name ?? "Unknown User";
+              const userEmail = item.userId?.email ?? "No Email";
+              const reasonText = item.reasonId?.reason ?? "No Reason Provided";
+              const points = item.reasonId?.points ?? 0;
+              const createdAt = item.createdAt ? new Date(item.createdAt) : null;
 
-                {/* Card Body */}
-                <div className="space-y-3">
-                  {/* Reason */}
-                  <div className="p-3 border border-gray-200 rounded-lg bg-gray-50">
-                    <div className="flex items-start gap-2">
-                      <FaExclamationTriangle className="flex-shrink-0 mt-1 text-gray-700" />
+              return (
+                <div
+                  key={item._id ?? index}
+                  className="p-6 transition-all duration-300 transform bg-white border-2 border-gray-200 group rounded-2xl hover:border-black hover:shadow-2xl hover:-translate-y-2 animate-fadeInUp"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  {/* Card Header */}
+                  <div className="pb-4 mb-4 border-b-2 border-gray-100">
+                    <div className="flex items-start gap-3">
+                      <div className="flex items-center justify-center flex-shrink-0 w-12 h-12 transition-transform duration-300 bg-black rounded-full group-hover:scale-110">
+                        <FaUser className="text-xl text-white" />
+                      </div>
                       <div className="flex-1 min-w-0">
-                        <p className="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">
-                          Reason
-                        </p>
-                        <p className="text-sm font-medium text-gray-900">
-                          {item.reasonId.reason}
-                        </p>
+                        <h3 className="text-xl font-bold text-gray-900 truncate">
+                          {userName}
+                        </h3>
+                        <div className="flex items-center gap-2 mt-1">
+                          <MdOutlineAttachEmail className="flex-shrink-0 text-gray-400" />
+                          <p className="text-sm text-gray-500 truncate">
+                            {userEmail}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
 
-                  {/* Points & Date */}
-                  <div className="flex gap-3">
-                    {/* Points */}
-                    <div className="flex-1 p-3 text-center text-white bg-black rounded-lg">
-                      <FaStar className="inline-block mb-1" />
-                      <p className="mb-1 text-xs font-semibold tracking-wide uppercase opacity-80">
-                        Points
-                      </p>
-                      <p className="text-2xl font-bold">
-                        {item.reasonId.points}
-                      </p>
+                  {/* Card Body */}
+                  <div className="space-y-3">
+                    {/* Reason */}
+                    <div className="p-3 border border-gray-200 rounded-lg bg-gray-50">
+                      <div className="flex items-start gap-2">
+                        <FaExclamationTriangle className="flex-shrink-0 mt-1 text-gray-700" />
+                        <div className="flex-1 min-w-0">
+                          <p className="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">
+                            Reason
+                          </p>
+                          <p className="text-sm font-medium text-gray-900">
+                            {reasonText}
+                          </p>
+                        </div>
+                      </div>
                     </div>
 
-                    {/* Date */}
-                    <div className="flex-1 p-3 text-center bg-gray-100 border border-gray-200 rounded-lg">
-                      <FaCalendarAlt className="inline-block mb-1 text-gray-700" />
-                      <p className="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">
-                        Date
-                      </p>
-                      <p className="text-xs font-medium text-gray-900">
-                        {new Date(item.createdAt).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric'
-                        })}
-                      </p>
-                      <p className="text-xs text-gray-500">
-                        {new Date(item.createdAt).toLocaleTimeString('en-US', {
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
-                      </p>
+                    {/* Points & Date */}
+                    <div className="flex gap-3">
+                      {/* Points */}
+                      <div className="flex-1 p-3 text-center text-white bg-black rounded-lg">
+                        <FaStar className="inline-block mb-1" />
+                        <p className="mb-1 text-xs font-semibold tracking-wide uppercase opacity-80">
+                          Points
+                        </p>
+                        <p className="text-2xl font-bold">
+                          {points}
+                        </p>
+                      </div>
+
+                      {/* Date */}
+                      <div className="flex-1 p-3 text-center bg-gray-100 border border-gray-200 rounded-lg">
+                        <FaCalendarAlt className="inline-block mb-1 text-gray-700" />
+                        <p className="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase">
+                          Date
+                        </p>
+                        <p className="text-xs font-medium text-gray-900">
+                          {createdAt ? createdAt.toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric'
+                          }) : "Unknown Date"}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {createdAt ? createdAt.toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          }) : ""}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

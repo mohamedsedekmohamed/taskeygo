@@ -47,6 +47,7 @@ import AddUserTaskProject from "../Admin/Task/AddUserTaskProject";
 //public page
 import Home from "../PublicPage/Home";
 import Plansp from '../PublicPage/Plans/Plans'
+import Profile from '../PublicPage/Profile'
 import Paymentp from "../PublicPage/Payment/Payment";
 import PaymentMethodsp from "../PublicPage/PaymentMethods/PaymentMethods";
 import Tasks from "../PublicPage/Task/Tasks";
@@ -68,6 +69,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Navigate to="home" replace /> },
       { path: "home", element: <Home /> },
+      { path: "profile", element: <Profile /> },
       { path: "plan", element: <Plansp /> },
       { path: "Payment", element: <Paymentp /> },
       { path: "PaymentMethods", element: <PaymentMethodsp /> },

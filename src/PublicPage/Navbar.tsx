@@ -1,7 +1,7 @@
 import  { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaSignOutAlt } from "react-icons/fa";
-import { motion } from "framer-motion";
+// import { FaSignOutAlt } from "react-icons/fa";
+// import { motion } from "framer-motion";
 import { FaTasks } from "react-icons/fa";
 import { FaUserAstronaut } from "react-icons/fa6";
 
@@ -15,19 +15,19 @@ const navLinks = [
 ];
 
 const Navbar = () => {
-  const [dropdownOpen, setDropdownOpen] = useState(false); 
+  // const [dropdownOpen, setDropdownOpen] = useState(false); 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-const handleLogout = () => {
-    localStorage.clear();
-    navigate("/mainpage");   
-  };
+// const handleLogout = () => {
+//     localStorage.clear();
+//     navigate("/mainpage");   
+//   };
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setDropdownOpen(false);
+        // setDropdownOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -89,7 +89,7 @@ const handleLogout = () => {
 
           <div className="relative px-3" ref={dropdownRef}>
             <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
+              onClick={() => navigate("/user/profile")}
               type="button"
               className="overflow-hidden border border-gray-300 rounded-full shadow-inner "
             >
@@ -97,7 +97,7 @@ const handleLogout = () => {
             <FaUserAstronaut className="text-4xl text-white"/>
             </button>
 
-            {dropdownOpen && (
+            {/* {dropdownOpen && (
               <div className="absolute right-0 z-100 top-2 mt-0.5 w-56 rounded-md border border-gray-100  shadow-lg dark:border-gray-800  bg-black">
                 <div className="flex justify-end p-2">
             
@@ -110,7 +110,7 @@ const handleLogout = () => {
     </motion.button>
                   </div>
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </div>
