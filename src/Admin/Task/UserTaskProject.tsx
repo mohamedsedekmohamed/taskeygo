@@ -35,7 +35,6 @@ interface UserReasons {
 }
 
 const UserTaskProject: React.FC = () => {
-  const [option,setOption]=useState<UserReasons[]>([]);
     const token = localStorage.getItem("token") || "";
 
   const { searchQuery } = useSearchStore();
@@ -48,22 +47,8 @@ const UserTaskProject: React.FC = () => {
   const { tasktId, projectId } = location.state || {};
 
   useEffect(() => {
-     axios
-      .get(`https://taskatbcknd.wegostation.com/api/admin/rejected-reasons`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      .then((res) => {
-        const Reasons: UserReasons[] = (res.data.data?.data || []).map((item: { _id: string; reason?: string; points?: string }) => ({
-          _id: item._id,
-          reason: item.reason || "Unknown User",
-          points: item.points || "Unknown User",
-        }));
-        setOption(Reasons);
-      })
-      .catch((err) => console.error(err));
-    if (tasktId) {
+    
       get(`https://taskatbcknd.wegostation.com/api/admin/user-task/${tasktId}`);
-    }
   }, [get, tasktId]);
 
   // 🗑 Delete User
@@ -163,82 +148,7 @@ const UserTaskProject: React.FC = () => {
         <option value="membercanapprove">Membercanapprove</option>
       </select>
 
-    {(row.status === "Approved from Member_can_approve" || row.status === "done") && (
-  <div>
-  <select
-        className="px-3 py-1 text-black bg-white border border-gray-300 rounded hover:border-gray-500"
-        value={row.status}
-        onChange={async (e) => {
-          const newStatus = e.target.value;
-          if (newStatus === "rejected") {
-            const reasonId = await Swal.fire({
-              title: t("SelectRejectionReason"),
-              input: "select",
-inputOptions: Object.fromEntries(
-  option.map(opt => [opt._id, `${opt.reason} (${opt.points})`])
-),
-              inputPlaceholder: t("SelectReason"),
-              showCancelButton: true,
-            });
 
-            if (reasonId.isConfirmed) {
-              try {
-                const res = await fetch(
-                  `https://taskatbcknd.wegostation.com/api/admin/user-task/${row.userTaskId}`,
-                  {
-                    method: "PUT",
-                    headers: {
-                      "Content-Type": "application/json",
-                      Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    },
-                    body: JSON.stringify({
-                      // User_taskId: row.userTaskId,
-                      status: newStatus,
-                      rejection_reasonId: reasonId.value,
-                    }),
-                  }
-                );
-                const data = await res.json();
-                if (data.success) {
-                  toast.success(t("StatusUpdatedSuccessfully"));
-                  get(`https://taskatbcknd.wegostation.com/api/admin/user-task/${tasktId}`);
-                } else toast.error(t("FailedToUpdateStatus"));
-              } catch (err) {
-                toast.error(t("UnknownError"));
-              }
-            }
-          } else {
-            try {
-              const res = await fetch(
-                `https://taskatbcknd.wegostation.com/api/admin/user-task/${row.userTaskId}`,
-                {
-                  method: "PUT",
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                  },
-                  body: JSON.stringify({
-                    // User_taskId: row.userTaskId,
-                    status: newStatus,
-                  }),
-                }
-              );
-              const data = await res.json();
-              if (data.success) {
-                toast.success(t("StatusUpdatedSuccessfully"));
-                get(`https://taskatbcknd.wegostation.com/api/admin/user-task/${tasktId}`);
-              } else toast.error(t("FailedToUpdateStatus"));
-            } catch (err) {
-              toast.error(t("UnknownError"));
-            }
-          }
-        }}
-      >
-        <option value="">Select</option>
-        <option value="approved">Approved</option>
-        <option value="rejected">Rejected</option>
-      </select>  </div>
-)}
 
     
 

@@ -62,7 +62,7 @@ const { get: getTask } = useGet<TaskResponse>();
   const [end_date, setEndDate] = useState("");
   const [recorde, setRecorde] = useState("");
 
-  const [file, setFile] = useState<File | null>(null);
+const [file, setFile] = useState<File | string | null>(null);
   const [loadingData, setLoadingData] = useState(false);
   const [projectOptions, setProjectOptions] = useState<Option[]>([]);
   const [departmentOptions, setDepartmentOptions] = useState<Option[]>([]);
@@ -105,11 +105,10 @@ const { get: getTask } = useGet<TaskResponse>();
             );
 
             setEndDate(task.end_date ? task.end_date.split("T")[0] : "");
-      if(task.recorde) {  
+      if(task.recorde !==null) {  
         setRecorde(task.recorde || "");
       } 
-
-            if (task.file) setFile(null);
+            if (task.file) setFile(task.file);
           }
         } catch {
           toast.error(t("FailedToLoadTask"));
@@ -313,7 +312,7 @@ if (description.trim().length < 5) {
   accept=".pdf,.doc,.docx,.xls,.xlsx"
   onChange={(e) => {
     const selectedFile = e.target.files?.[0];
-    console.log("Selected file:", selectedFile); // 🔍 اطبع هنا عشان تتأكد
+    console.log("Selected file:", selectedFile); 
     setFile(selectedFile || null);
   }}
   className="w-full px-5 py-3 border-2 rounded-xl"

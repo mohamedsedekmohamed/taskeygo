@@ -486,7 +486,7 @@ placeholder="Search for a task..."
     }
   }}
   className="w-full py-3 font-semibold text-white transition-all duration-300 transform bg-black rounded-xl hover:scale-105"
-  disabled={!task?.task_id?.projectId}
+  // disabled={!task?.task_id?.projectId}
 >
   View Details
 </button>

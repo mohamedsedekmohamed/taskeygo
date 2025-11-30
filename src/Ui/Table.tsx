@@ -94,7 +94,7 @@ const lang = i18n.language;
                     : "hover:bg-gray-200"
                 }`}
               >
-             <td className="px-4">{idx+1}</td>
+<td className="px-4">{startIndex + idx + 1}</td>
            {columns.map((col) => {
 const value = row[col.key as keyof T];
   const isTruncated = typeof value === "string" && value.length > charLimit;

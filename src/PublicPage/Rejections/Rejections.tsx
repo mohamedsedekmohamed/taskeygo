@@ -5,20 +5,22 @@ import { FaUser, FaExclamationTriangle, FaCalendarAlt, FaStar } from "react-icon
 import { MdOutlineAttachEmail } from "react-icons/md";
 import Loader from "../../Component/Loading";
 
-interface Rejection {
+ interface Rejection {
   _id: string;
-  createdAt: string;
-  reason: {
-    _id: string;
-    reason: string;
-    points: number;
-  };
-  points: number;
-  user: {
+  userId: {
     _id: string;
     name: string;
     email: string;
   };
+  reasonId: {
+    _id: string;
+    reason: string;
+    points: number;
+  };
+  taskId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
 }
 
 const Rejections = () => {
@@ -94,12 +96,12 @@ const Rejections = () => {
                     </div>
                     <div className="flex-1 min-w-0">
                       <h3 className="text-xl font-bold text-gray-900 truncate">
-                        {item.user.name}
+                        {item.userId.name}
                       </h3>
                       <div className="flex items-center gap-2 mt-1">
                         <MdOutlineAttachEmail className="flex-shrink-0 text-gray-400" />
                         <p className="text-sm text-gray-500 truncate">
-                          {item.user.email}
+                          {item.userId.email}
                         </p>
                       </div>
                     </div>
@@ -117,7 +119,7 @@ const Rejections = () => {
                           Reason
                         </p>
                         <p className="text-sm font-medium text-gray-900">
-                          {item.reason.reason}
+                          {item.reasonId.reason}
                         </p>
                       </div>
                     </div>
@@ -132,7 +134,7 @@ const Rejections = () => {
                         Points
                       </p>
                       <p className="text-2xl font-bold">
-                        {item.reason.points}
+                        {item.reasonId.points}
                       </p>
                     </div>
 

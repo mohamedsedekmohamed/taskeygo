@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ButtonAdd from "../../Ui/ButtonAdd";
 import Table from "../../Ui/Table";
 import { useTheme } from "../../Hooks/ThemeContext";
@@ -10,7 +10,7 @@ import Loading from "../../Component/Loading";
 import { useNavigate } from "react-router-dom";
 import { useSearchStore } from "../../store/useSearchStore";
 import { useTranslation } from "react-i18next";
-
+import axios from "axios";
 interface TaskType {
   _id: string;
   name: string;
@@ -35,7 +35,11 @@ interface TaskResponse {
   tasks: TaskType[];
 }
 
-
+interface UserReasons {
+  _id: string;
+  reason: string;
+  points: string;
+}
 const Task: React.FC = () => {
   const { searchQuery } = useSearchStore();
   const { t } = useTranslation();
@@ -43,9 +47,25 @@ const Task: React.FC = () => {
   const { data, loading, error, get } = useGet<TaskResponse>();
   const { del } = useDelete();
   const nav = useNavigate();
+  const [option,setOption]=useState<UserReasons[]>([]);
+    const token = localStorage.getItem("token") || "";
 
   useEffect(() => {
+      axios
+      .get(`https://taskatbcknd.wegostation.com/api/admin/rejected-reasons`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        const Reasons: UserReasons[] = (res.data.data?.data || []).map((item: { _id: string; reason?: string; points?: string }) => ({
+          _id: item._id,
+          reason: item.reason || "Unknown User",
+          points: item.points || "Unknown User",
+        }));
+        setOption(Reasons);
+      })
+      .catch((err) => console.error(err));
     get("https://taskatbcknd.wegostation.com/api/admin/tasks");
+    
   }, [get]);
 
   const handleDelete = async (row: TaskType) => {
@@ -100,6 +120,25 @@ const Task: React.FC = () => {
       label: t("CreatedBy"),
       render: (_: any, row: TaskType) => row.createdBy?.name || "-",
     },
+ {
+  key: "file",
+  label: t("file"),
+  render: (_: any, row: TaskType) =>
+    row.file ? (
+      <a
+        href={row.file}
+        download
+        target="_blank"
+        rel="noopener noreferrer"
+        className="px-3 py-1 text-white rounded-md bg-maincolor hover:bg-maincolor/80"
+      >
+        {t("download")}
+      </a>
+    ) : (
+      "-"
+    )
+}
+,
     {
       key: "actions",
       label: t("Actions"),
@@ -124,6 +163,82 @@ onClick={() =>
           >
 usertask
           </button>
+              {(row.status === "Approved from Member_can_approve" || row.status === "done") && (
+  <div>
+  <select
+        className="px-3 py-1 text-black bg-white border border-gray-300 rounded hover:border-gray-500"
+        value={row.status}
+        onChange={async (e) => {
+          const newStatus = e.target.value;
+          if (newStatus === "rejected") {
+            const reasonId = await Swal.fire({
+              title: t("SelectRejectionReason"),
+              input: "select",
+inputOptions: Object.fromEntries(
+  option.map(opt => [opt._id, `${opt.reason} (${opt.points})`])
+),
+              inputPlaceholder: t("SelectReason"),
+              showCancelButton: true,
+            });
+
+            if (reasonId.isConfirmed) {
+              try {
+                const res = await fetch(
+                  `https://taskatbcknd.wegostation.com/api/admin/user-task/${row._id}`,
+                  {
+                    method: "PUT",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    },
+                    body: JSON.stringify({
+                      // User_taskId: row.userTaskId,
+                      status: newStatus,
+                      rejection_reasonId: reasonId.value,
+                    }),
+                  }
+                );
+                const data = await res.json();
+                if (data.success) {
+                  toast.success(t("StatusUpdatedSuccessfully"));
+                  get(`https://taskatbcknd.wegostation.com/api/admin/user-task/${tasktId}`);
+                } else toast.error(t("FailedToUpdateStatus"));
+              } catch (err) {
+                toast.error(t("UnknownError"));
+              }
+            }
+          } else {
+            try {
+              const res = await fetch(
+                `https://taskatbcknd.wegostation.com/api/admin/user-task/${row.userTaskId}`,
+                {
+                  method: "PUT",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                  },
+                  body: JSON.stringify({
+                    // User_taskId: row.userTaskId,
+                    status: newStatus,
+                  }),
+                }
+              );
+              const data = await res.json();
+              if (data.success) {
+                toast.success(t("StatusUpdatedSuccessfully"));
+                get(`https://taskatbcknd.wegostation.com/api/admin/user-task/${tasktId}`);
+              } else toast.error(t("FailedToUpdateStatus"));
+            } catch (err) {
+              toast.error(t("UnknownError"));
+            }
+          }
+        }}
+      >
+        <option value="">Select</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
+      </select>  </div>
+)}
           <button
             onClick={() => handleDelete(row)}
             className="px-3 py-1 text-white bg-red-600 rounded hover:bg-red-700"
