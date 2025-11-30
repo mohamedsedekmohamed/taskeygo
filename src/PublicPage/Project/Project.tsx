@@ -6,15 +6,15 @@ import Loader from "../../Component/Loading";
 
 interface ProjectData {
   _id: string;
-  email: string;
-  user_id: string;
-  project_id: {
-    _id: string;
-    name: string;
+  email?: string;
+  user_id?: string;
+  project_id?: {
+    _id?: string;
+    name?: string;
   };
-  role: string;
-  createdAt: string;
-  updatedAt: string;
+  role?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 interface ApiResponse {
@@ -43,7 +43,7 @@ const Project: React.FC = () => {
           }
         );
         if (response.data.success) {
-          setProjects(response.data.data.projects);
+          setProjects(response.data.data.projects ?? []);
         }
       } catch (error) {
         console.error("Error fetching projects:", error);
@@ -55,7 +55,8 @@ const Project: React.FC = () => {
     fetchProjects();
   }, []);
 
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return "Unknown Date";
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
@@ -97,15 +98,14 @@ const Project: React.FC = () => {
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
             {projects.map((project) => (
               <div
-                key={project._id}
+                key={project._id ?? Math.random()}
                 className="relative overflow-hidden transition-all duration-300 bg-white border border-gray-200 shadow-md group rounded-2xl hover:shadow-lg hover:-translate-y-1"
               >
-                {/* Card Content */}
                 <div className="p-6">
                   {/* Project Title */}
                   <div className="flex items-start justify-between mb-4">
-                    <h2 className="text-2xl font-bold text-/90 line-clamp-2">
-                      {project.project_id.name}
+                    <h2 className="text-2xl font-bold text-gray-900 line-clamp-2">
+                      {project.project_id?.name ?? "Unnamed Project"}
                     </h2>
                     <div className="p-2 bg-gray-100 rounded-lg">
                       <Folder className="w-6 h-6 text-gray-800" />
@@ -116,13 +116,13 @@ const Project: React.FC = () => {
                   <div className="mb-6 space-y-3">
                     <div className="flex items-center gap-3 text-gray-700">
                       <Mail className="w-5 h-5 text-gray-500" />
-                      <span className="text-sm truncate">{project.email}</span>
+                      <span className="text-sm truncate">{project.email ?? "No Email"}</span>
                     </div>
                     
                     <div className="flex items-center gap-3 text-gray-700">
                       <UserCircle className="w-5 h-5 text-gray-500" />
                       <span className="inline-block px-3 py-1 text-sm font-medium text-white bg-gray-800 rounded-full">
-                        {project.role}
+                        {project.role ?? "Unknown Role"}
                       </span>
                     </div>
 
@@ -134,7 +134,7 @@ const Project: React.FC = () => {
 
                   {/* View Button */}
                   <button
-                    onClick={() => navigate(`/user/ProjectId/${project.project_id._id}`)}
+                    onClick={() => navigate(`/user/ProjectId/${project.project_id?._id ?? ""}`)}
                     className="flex items-center justify-center w-full gap-2 px-6 py-3 font-semibold text-white transition-all duration-300 transform bg-black rounded-xl hover:bg-black/80"
                   >
                     <Eye className="w-5 h-5" />
