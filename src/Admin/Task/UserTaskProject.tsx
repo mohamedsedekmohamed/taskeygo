@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import ButtonAdd from "../../Ui/ButtonAdd";
 import Table from "../../Ui/Table";
 import { useTheme } from "../../Hooks/ThemeContext";
@@ -10,7 +10,7 @@ import Loading from "../../Component/Loading";
 import { useLocation } from "react-router-dom";
 import { useSearchStore } from "../../store/useSearchStore";
 import { useTranslation } from "react-i18next";
-import axios from "axios";
+// import axios from "axios";
 
 interface UserInfo {
   _id: string;
@@ -28,14 +28,14 @@ roleInsideTask:string
 status:string;
   user: UserInfo;
 }
-interface UserReasons {
-  _id: string;
-  reason: string;
-  points: string;
-}
+// interface UserReasons {
+//   _id: string;
+//   reason: string;
+//   points: string;
+// }
 
 const UserTaskProject: React.FC = () => {
-    const token = localStorage.getItem("token") || "";
+    // const token = localStorage.getItem("token") || "";
 
   const { searchQuery } = useSearchStore();
   const { t } = useTranslation();

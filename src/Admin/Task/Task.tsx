@@ -201,7 +201,7 @@ inputOptions: Object.fromEntries(
                 const data = await res.json();
                 if (data.success) {
                   toast.success(t("StatusUpdatedSuccessfully"));
-                  get(`https://taskatbcknd.wegostation.com/api/admin/user-task/${tasktId}`);
+                  get(`https://taskatbcknd.wegostation.com/api/admin/tasks`);
                 } else toast.error(t("FailedToUpdateStatus"));
               } catch (err) {
                 toast.error(t("UnknownError"));
@@ -210,7 +210,7 @@ inputOptions: Object.fromEntries(
           } else {
             try {
               const res = await fetch(
-                `https://taskatbcknd.wegostation.com/api/admin/user-task/${row.userTaskId}`,
+                `https://taskatbcknd.wegostation.com/api/admin/user-task/${row._id}`,
                 {
                   method: "PUT",
                   headers: {
@@ -226,7 +226,7 @@ inputOptions: Object.fromEntries(
               const data = await res.json();
               if (data.success) {
                 toast.success(t("StatusUpdatedSuccessfully"));
-                get(`https://taskatbcknd.wegostation.com/api/admin/user-task/${tasktId}`);
+                get(`https://taskatbcknd.wegostation.com/api/admin/tasks`);
               } else toast.error(t("FailedToUpdateStatus"));
             } catch (err) {
               toast.error(t("UnknownError"));
