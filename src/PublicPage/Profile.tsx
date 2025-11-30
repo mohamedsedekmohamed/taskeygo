@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import Loader from "../Component/Loading";
 import type { ChangeEvent } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface User {
   _id: string;
@@ -81,7 +82,12 @@ const Profile = () => {
       toast.error("Delete failed");
     }
   };
+    const navigate = useNavigate();
 
+const handleLogout = () => {
+    localStorage.clear();
+    navigate("/mainpage");   
+  };
   // ------------------ HANDLE INPUT ------------------
   const handleChange = (
     e: ChangeEvent<HTMLInputElement>,
@@ -159,6 +165,22 @@ const Profile = () => {
           </button>
         </div>
       </div>
+      <button
+  onClick={handleLogout}
+  className="
+    fixed bottom-6 right-6
+    bg-white text-black font-bold 
+    border-2 border-black 
+    px-6 py-3 rounded-2xl 
+    shadow-[4px_4px_0_#000]
+    hover:-translate-y-1 hover:shadow-[6px_6px_0_#000]
+    active:translate-y-0 active:shadow-[4px_4px_0_#000]
+    transition-all duration-200
+  "
+>
+  Logout
+</button>
+
     </div>
   );
 };
