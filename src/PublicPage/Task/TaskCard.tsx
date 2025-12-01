@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import type { Task } from "./Tasks";
 
@@ -13,7 +13,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, fetchTasks }) => {
 
   const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newStatus = e.target.value;
-    if(!newStatus) return
+    if (!newStatus) return;
     setStatus(newStatus);
     setLoadingStatus(true);
 
@@ -31,10 +31,9 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, fetchTasks }) => {
         }
       );
 
-      // Refresh tasks after successful update
       await fetchTasks();
     } catch (error) {
-      setStatus(task.status)
+      setStatus(task.status);
       console.error("Failed to update status:", error);
     } finally {
       setLoadingStatus(false);
@@ -76,46 +75,26 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, fetchTasks }) => {
           </span>
         </div>
 
-        <select
-          value={status}
-          onChange={handleStatusChange}
-          disabled={loadingStatus}
-          className="px-3 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border rounded-full"
-        >
-         <option value="">Select</option>
-{status === "pending" && task.role!=="membercanapprove" && (
-  <option value="in_progress">In Progress</option>
-)}
-{status === "pending" && task.role==="membercanapprove" && (<>
-  <option value="rejected from Member_can_rejected">Rejected</option>
-</>
-)}
-{status === "pending" && task.role==="membercanapprove" && (<>
-  <option value="Approved from Member_can_approve">Approved</option>
-</>
-)}
-{(status === "in_progress" || status === "in_progress_edit" ) && (
-  <option value="done">Done</option>
-)}
-{(status==="rejected") && (<>
-  <option value="pending_edit">pending_edit</option>
-    {/* <option value="done">Done</option> */}
-
-</>
-  
-)}
-
-        </select>
+        {!task.is_finished && (
+          <select
+            value={status}
+            onChange={handleStatusChange}
+            disabled={loadingStatus}
+            className="px-3 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border rounded-full"
+          >
+            <option value="">Select</option>
+            {status==="pending" &&<option value="in_progress">In Progress</option> }
+            {status==="Pending_edit'" &&<option value="in_progress_edit">In Progress Edit</option> }
+            {(status === "in_progress" || status === "in_progress_edit") && <option value="done">Done</option>}
+            {/* {status === "rejected" && <option value="pending_edit">pending_edit</option>}<option value="done">Done</option> */}
+          </select>
+        )}
 
         <div className="flex items-center">
           {task.is_finished ? (
-            <span className="flex items-center text-sm font-medium text-green-600">
-              Completed
-            </span>
+            <span className="flex items-center text-sm font-medium text-green-600">Completed</span>
           ) : (
-            <span className="flex items-center text-sm font-medium text-orange-600">
-              In Progress
-            </span>
+            <span className="flex items-center text-sm font-medium text-orange-600">In Progress</span>
           )}
         </div>
 

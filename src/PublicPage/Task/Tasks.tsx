@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import Loader from "../../Component/Loading";
 import TaskCard from "./TaskCard";
+
 interface User {
   _id: string;
   name: string;
@@ -31,7 +32,7 @@ interface ApiResponse {
   success: boolean;
   data: {
     message: string;
-    tasks: Task[];
+    data: Task[]; // تعديل هنا ليتوافق مع شكل الـ API الجديد
   };
 }
 
@@ -63,7 +64,7 @@ const Tasks: React.FC = () => {
       );
 
       if (response.data.success) {
-        setTasks(response.data.data.tasks);
+        setTasks(response.data.data.data); // <-- تعديل هنا
       }
     } catch (err: any) {
       const errorMessage = err.response?.data?.message || err.message || "Error fetching data";

@@ -485,21 +485,23 @@ placeholder="Search for a task..."
                           </div>
                       
                         </div>
-<button
+                        {task.role==="member"&&(
+                       <button
   onClick={() => {
-      nav(`/user/task/${id}`);
+      nav(`/user/task/${task.task_id?._id}`);
     
   }}
   className="w-full py-3 font-semibold text-white transition-all duration-300 transform bg-black rounded-xl hover:scale-105"
-  // disabled={!task?.task_id?.projectId}
 > 
   View Details
 </button>
+   
+                        )}
 
-{task.role==="teamlead"&&(
+{task.role==="teamlead"&&(<>
   <button
   onClick={() => {
-      nav(`/user/users/${task.task_id?._id}`);
+    nav(`/user/users/${task._id}`);
     
   }}
   className="w-full py-3 my-3 font-semibold text-white transition-all duration-300 transform bg-black rounded-xl hover:scale-105"
@@ -507,11 +509,21 @@ placeholder="Search for a task..."
 > 
   show User in Project
 </button>
+  <button
+  onClick={() => {
+      nav(`/user/task/${task.task_id?._id}`);
+    
+  }}
+  className="w-full py-3 font-semibold text-white transition-all duration-300 transform bg-black rounded-xl hover:scale-105"
+> 
+  View Details
+</button>
+  </>
 )}
 {task.role==="membercanapprove" &&(
   <button
   onClick={() => {
-      nav(`/user/users/${task.task_id?._id}`);
+      nav(`/user/users/${task._id}`);
     
   }}
   className="w-full py-3 my-3 font-semibold text-white transition-all duration-300 transform bg-black rounded-xl hover:scale-105"
@@ -519,6 +531,7 @@ placeholder="Search for a task..."
 > 
   show User in Project
 </button>
+
 )}
 
 
