@@ -66,13 +66,13 @@ const Project: React.FC = () => {
 
   if (loading)
     return (
-      <div className="min-h-screen text-center bg-white">
+      <div className="min-h-screen text-center ">
         <Loader color={"#000000"} />
       </div>
     );
 
   return (
-    <div className="min-h-screen text-black bg-white">
+    <div className="min-h-screen text-black ">
       <div className="relative py-16 overflow-hidden">
         <div className="relative z-10 px-4">
           <div className="flex items-center justify-center mb-4">

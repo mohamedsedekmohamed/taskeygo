@@ -108,7 +108,7 @@ const handleLogout = () => {
       </div>
     );
   return (
-    <div className="flex items-center justify-center min-h-screen px-4 ">
+    <div className="flex items-center justify-center max-h-screen px-4 ">
       <div className="w-full max-w-md bg-white border border-black rounded-2xl p-6 shadow-[4px_4px_0_#000]">
 
         {/* Title */}

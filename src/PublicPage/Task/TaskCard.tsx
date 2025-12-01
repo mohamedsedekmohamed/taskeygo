@@ -34,6 +34,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, fetchTasks }) => {
       // Refresh tasks after successful update
       await fetchTasks();
     } catch (error) {
+      setStatus(task.status)
       console.error("Failed to update status:", error);
     } finally {
       setLoadingStatus(false);
@@ -82,8 +83,16 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, fetchTasks }) => {
           className="px-3 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border rounded-full"
         >
          <option value="">Select</option>
-{status === "pending" && (
+{status === "pending" && task.role!=="membercanapprove" && (
   <option value="in_progress">In Progress</option>
+)}
+{status === "pending" && task.role==="membercanapprove" && (<>
+  <option value="rejected from Member_can_rejected">Rejected</option>
+</>
+)}
+{status === "pending" && task.role==="membercanapprove" && (<>
+  <option value="Approved from Member_can_approve">Approved</option>
+</>
 )}
 {(status === "in_progress" || status === "in_progress_edit" ) && (
   <option value="done">Done</option>

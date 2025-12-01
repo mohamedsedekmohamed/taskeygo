@@ -54,6 +54,7 @@ import Tasks from "../PublicPage/Task/Tasks";
 import Projectuser from '../PublicPage/Project/Project'
 import ProjectId from '../PublicPage/Project/ProjectId'
 import Rejections from '../PublicPage/Rejections/Rejections'
+import User from '../PublicPage/Project/User'
 const router = createBrowserRouter([
   {
     path: "/",
@@ -70,6 +71,7 @@ const router = createBrowserRouter([
       { index: true, element: <Navigate to="home" replace /> },
       { path: "home", element: <Home /> },
       { path: "profile", element: <Profile /> },
+      { path: "users/:id", element: <User /> },
       { path: "plan", element: <Plansp /> },
       { path: "Payment", element: <Paymentp /> },
       { path: "PaymentMethods", element: <PaymentMethodsp /> },

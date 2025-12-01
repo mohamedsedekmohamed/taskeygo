@@ -470,6 +470,12 @@ placeholder="Search for a task..."
                               Priority: {task.task_id?.priority ?? 'N/A'}
                             </span>
                           </div>
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-gray-500" />
+                            <span className={`px-3 py-1 text-xs font-semibold text-white bg-black rounded-full `}>
+                              role: {task.role ?? 'N/A'}
+                            </span>
+                          </div>
 
                           <div className="flex items-center gap-2">
                             <UserCircle className="w-4 h-4 text-gray-500" />
@@ -481,15 +487,40 @@ placeholder="Search for a task..."
                         </div>
 <button
   onClick={() => {
-    if (task?.task_id?.projectId) {
-      nav(`/user/task/${task.task_id.projectId}`);
-    }
+      nav(`/user/task/${id}`);
+    
   }}
   className="w-full py-3 font-semibold text-white transition-all duration-300 transform bg-black rounded-xl hover:scale-105"
   // disabled={!task?.task_id?.projectId}
->
+> 
   View Details
 </button>
+
+{task.role==="teamlead"&&(
+  <button
+  onClick={() => {
+      nav(`/user/users/${task.task_id?._id}`);
+    
+  }}
+  className="w-full py-3 my-3 font-semibold text-white transition-all duration-300 transform bg-black rounded-xl hover:scale-105"
+  // disabled={!task?.task_id?.projectId}
+> 
+  show User in Project
+</button>
+)}
+{task.role==="membercanapprove" &&(
+  <button
+  onClick={() => {
+      nav(`/user/users/${task.task_id?._id}`);
+    
+  }}
+  className="w-full py-3 my-3 font-semibold text-white transition-all duration-300 transform bg-black rounded-xl hover:scale-105"
+  // disabled={!task?.task_id?.projectId}
+> 
+  show User in Project
+</button>
+)}
+
 
                       </>
                     )}

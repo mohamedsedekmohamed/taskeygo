@@ -51,13 +51,13 @@ const Rejections = () => {
 
   if (loading)
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="flex items-center justify-center min-h-screen ">
         <Loader color={"#000000"} />
       </div>
     );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+    <div className="min-h-screen ">
       {/* Header Section */}
       <div className="px-6 py-12 text-white bg-black shadow-xl">
         <div className="mx-auto max-w-7xl">
