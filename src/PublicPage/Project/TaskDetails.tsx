@@ -100,9 +100,10 @@ const TaskDetails: React.FC = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setReasons(response.data.data.rejected_reason);
-      } catch (err) {
-        toast.error("Failed to fetch rejection reasons:", err);
-      }
+      } catch (error: unknown) {
+  toast.error((error as Error)?.message || "حدث خطأ غير متوقع");
+}
+
     };
 
     fetchReasons();
