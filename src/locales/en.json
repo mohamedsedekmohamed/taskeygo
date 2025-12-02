@@ -18,7 +18,18 @@
   "AddProject": "Add Project",
   "ProjectName": "Project Name",
   "ProjectDescription": "Description",
-  
+   "Task": "Task",
+  "Title": "Title",
+ 
+  "CreatedBy": "Created By",
+  "file": "File",
+  "download": "Download",
+  "usertask": "User Task",
+ 
+  "TaskDeletedSuccessfully": "Task deleted successfully",
+  "FailedToDeleteTask": "Failed to delete task",
+  "FailedToLoadTasks": "Failed to load tasks",
+  "NoTasksFound": "No tasks found",
   "NoProjectsFound": "No projects found",
   "FailedToLoadProjects": "Failed to load projects",
   "AddTask": "Add Task",

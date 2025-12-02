@@ -163,7 +163,7 @@ onClick={() =>
           >
 usertask
           </button>
-              {(row.status === "Approved from Member_can_approve" || row.status === "done") && (
+              {(row.status === "waiting_for_approve") && (
   <div>
   <select
         className="px-3 py-1 text-black bg-white border border-gray-300 rounded hover:border-gray-500"
@@ -184,9 +184,9 @@ inputOptions: Object.fromEntries(
             if (reasonId.isConfirmed) {
               try {
                 const res = await fetch(
-                  `https://taskatbcknd.wegostation.com/api/admin/user-task/${row._id}`,
+                  `https://taskatbcknd.wegostation.com/api/admin/tasks/approve_reject/${row._id}`,
                   {
-                    method: "PUT",
+                    method: "POST",
                     headers: {
                       "Content-Type": "application/json",
                       Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -210,9 +210,9 @@ inputOptions: Object.fromEntries(
           } else {
             try {
               const res = await fetch(
-                `https://taskatbcknd.wegostation.com/api/admin/user-task/${row._id}`,
+                `https://taskatbcknd.wegostation.com/api/admin/tasks/approve_reject/${row._id}`,
                 {
-                  method: "PUT",
+                  method: "POST",
                   headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -235,7 +235,7 @@ inputOptions: Object.fromEntries(
         }}
       >
         <option value="">Select</option>
-        <option value="approved">Approved</option>
+        <option value="Approved">Approved</option>
         <option value="rejected">Rejected</option>
       </select>  </div>
 )}

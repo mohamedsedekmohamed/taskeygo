@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import Loader from "../Component/Loading";
 import type { ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { FaExclamationCircle } from "react-icons/fa";
 interface User {
   _id: string;
   name: string;
@@ -108,7 +108,7 @@ const handleLogout = () => {
       </div>
     );
   return (
-    <div className="flex items-center justify-center max-h-screen px-4 ">
+    <div className="flex flex-col items-center justify-center max-h-screen px-4">
       <div className="w-full max-w-md bg-white border border-black rounded-2xl p-6 shadow-[4px_4px_0_#000]">
 
         {/* Title */}
@@ -165,6 +165,23 @@ const handleLogout = () => {
           </button>
         </div>
       </div>
+
+  <div className="flex items-center justify-center mt-6 ">
+      <div className="flex items-center gap-4 bg-white border-2 border-black rounded-2xl p-4 shadow-[4px_4px_0_#000] hover:shadow-[6px_6px_0_#000] transition-all">
+        
+        {/* أيقونة */}
+        <div className="text-2xl text-black">
+          <FaExclamationCircle />
+        </div>
+
+        {/* نص النقاط */}
+        <div className="text-black">
+          <p className="text-sm font-semibold">Total Rejected Points</p>
+          <p className="text-3xl font-bold">{user.totalRejectedPoints}</p>
+        </div>
+      </div>
+    </div>
+      
       <button
   onClick={handleLogout}
   className="

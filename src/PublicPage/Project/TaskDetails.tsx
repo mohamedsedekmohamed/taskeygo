@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import Loader from "../../Component/Loading";
+import toast from "react-hot-toast";
+
 import {
   ShieldUser,
   Clock, AlertCircle,
@@ -75,14 +77,39 @@ interface IResponse {
     data: IResponseData;
   };
 }
-
+interface RejectionReason {
+  _id: string;
+  reason: string;
+  points: number;
+}
 const TaskDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [data, setData] = useState<IResponse | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [reasons, setReasons] = useState<RejectionReason[]>([]);
+  const [showRejectPopup, setShowRejectPopup] = useState(false);
+  const [selectedReason, setSelectedReason] = useState<string>("");
 
   useEffect(() => {
+    const fetchReasons = async () => {
+      try {
+        const token = localStorage.getItem("token") || "";
+        const response = await axios.get(
+          "https://taskatbcknd.wegostation.com/api/user/tasks/selection",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setReasons(response.data.data.rejected_reason);
+      } catch (err) {
+        toast.error("Failed to fetch rejection reasons:", err);
+      }
+    };
+
+    fetchReasons();
+  }, []);
+
+  useEffect(() => {
+
     let isMounted = true;
 
     const fetchTask = async () => {
@@ -113,7 +140,7 @@ const TaskDetails: React.FC = () => {
           setData(res.data);
         }
       } catch (err: any) {
-        console.error("Fetch Error:", err);
+        toast.error("Fetch Error:", err);
 
         if (isMounted) {
           setError(
@@ -166,6 +193,21 @@ const TaskDetails: React.FC = () => {
         return "bg-gray-50 text-gray-800 border-gray-200";
     }
   };
+  const updateStatus = async (status: string, ids: string, reason?: string) => {
+    try {
+      const token = localStorage.getItem("token") || "";
+
+      await axios.put(
+        `https://taskatbcknd.wegostation.com/api/user/tasks/${ids}`,
+        { status, reason },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      window.location.reload();
+    } catch (err) {
+      console.error("Update Status Error:", err);
+    }
+  };
 
   const getRoleIcon = (role?: string) => {
     if (!role) return <Target className="w-4 h-4" />;
@@ -173,6 +215,7 @@ const TaskDetails: React.FC = () => {
     if (role.includes("lead")) return <Target className="w-4 h-4" />;
     return <Target className="w-4 h-4" />;
   };
+  const [selectedMemberId, setSelectedMemberId] = useState<string>("");
 
   if (loading)
     return (
@@ -206,7 +249,7 @@ const TaskDetails: React.FC = () => {
   // const taskid = info.task._id
   return (
     <div className="min-h-screen py-8 ">
-      <div className="px-4 mx-auto max-w-7xl">
+      <div className="px-2 mx-auto lg:px-4">
         {/* Header */}
         <div className="mb-8 border shadow-md rounded-2xl">
           <div className="flex items-center gap-6 p-6">
@@ -225,68 +268,75 @@ const TaskDetails: React.FC = () => {
           {/* Main Content */}
           <div className="space-y-6 lg:col-span-2">
             {/* Task Info */}
-            <div className="bg-white border shadow-sm rounded-2xl">
-              <div className="p-5 border-b">
-                <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-900">
-                  <FileText className="w-5 h-5" />
-                  Task Information
-                </h2>
-              </div>
+ <div className="w-full max-w-5xl mx-auto bg-white border shadow-sm rounded-2xl">
+  {/* Header */}
+  <div className="p-3 border-b sm:p-4 lg:p-5">
+    <h2 className="flex items-center gap-2 text-lg font-semibold text-gray-900">
+      <FileText className="w-5 h-5" />
+      Task Information
+    </h2>
+  </div>
 
-              <div className="p-6 space-y-4">
-                <p className="text-sm text-gray-500">Description</p>
-                <div className="p-4 text-gray-800 rounded-lg bg-gray-50">
-                  {info.task?.description || "—"}
-                </div>
+  {/* Content */}
+  <div className="p-4 space-y-4 sm:p-6">
+    {/* Description */}
+    <div>
+      <p className="mb-1 text-sm text-gray-500">Description</p>
+      <div className="p-3 text-gray-800 rounded-lg sm:p-4 bg-gray-50">
+        {info.task?.description || "—"}
+      </div>
+    </div>
 
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  {/* Priority */}
-                  <div className="p-4 border rounded-xl">
-                    <p className="mb-1 text-xs text-gray-500">Priority</p>
-                    <span className={`inline-block px-3 py-1 rounded-lg font-semibold text-sm ${getPriorityColor(info.task?.priority)}`}>
-                      {info.task?.priority || "—"}
-                    </span>
-                  </div>
+    {/* Grid for details */}
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {/* Priority */}
+      <div className="flex flex-col p-3 border sm:p-4 rounded-xl">
+        <p className="mb-1 text-xs text-gray-500">Priority</p>
+        <span className={`inline-block px-3 py-1 rounded-lg font-semibold text-sm ${getPriorityColor(info.task?.priority)}`}>
+          {info.task?.priority || "—"}
+        </span>
+      </div>
 
-                  {/* Status */}
-                  <div className="p-4 border rounded-xl">
-                    <p className="mb-1 text-xs text-gray-500">Status</p>
-                    <span className={`inline-block px-3 py-1 rounded-lg font-semibold text-sm ${getStatusColor(info.task?.status)}`}>
-                      {info.task?.status || "—"}
-                    </span>
-                  </div>
+      {/* Status */}
+      <div className="flex flex-col p-3 border sm:p-4 rounded-xl">
+        <p className="mb-1 text-xs text-gray-500">Status</p>
+        <span className={`inline-block px-3 py-1 rounded-lg font-semibold text-sm ${getStatusColor(info.task?.status)}`}>
+          {info.task?.status || "—"}
+        </span>
+      </div>
 
-                  {/* End Date */}
-                  <div className="p-4 border rounded-xl">
-                    <p className="mb-1 text-xs text-gray-500">End Date</p>
-                    <p className="font-semibold">
-                      {info.task?.end_date
-                        ? new Date(info.task.end_date).toLocaleDateString("en-US")
-                        : "—"}
-                    </p>
-                  </div>
+      {/* End Date */}
+      <div className="flex flex-col p-3 border sm:p-4 rounded-xl">
+        <p className="mb-1 text-xs text-gray-500">End Date</p>
+        <p className="font-semibold">
+          {info.task?.end_date
+            ? new Date(info.task.end_date).toLocaleDateString("en-US")
+            : "—"}
+        </p>
+      </div>
 
-                  {/* File */}
-                  <div className="p-4 border rounded-xl">
-                    <p className="mb-1 text-xs text-gray-500">File</p>
-                    {info.task?.file ? (
-                      <a
-                        href={info.task.file}
-                        download
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 px-3 py-1 text-sm font-semibold text-white bg-black rounded-lg"
-                      >
-                        <Download className="w-4 h-4" />
-                        Download
-                      </a>
-                    ) : (
-                      <span className="text-sm text-gray-600">No file</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
+      {/* File */}
+      <div className="flex flex-col p-3 border sm:p-4 rounded-xl">
+        <p className="mb-1 text-xs text-gray-500">File</p>
+        {info.task?.file ? (
+          <a
+            href={info.task.file}
+            download
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-around gap-2 px-3 py-1 text-sm font-semibold text-white bg-black rounded-lg "
+          >
+            <Download className="w-4 h-4" />
+            <p>Download</p>
+          </a>
+        ) : (
+          <span className="text-sm text-gray-600">No file</span>
+        )}
+      </div>
+    </div>
+  </div>
+</div>
+
 
             {/* Team Members */}
             <div className="bg-white border shadow-sm rounded-2xl">
@@ -301,11 +351,10 @@ const TaskDetails: React.FC = () => {
               <div className="p-6 space-y-4">
                 {info.teamMembers && info.teamMembers.length > 0 ? (
                   info.teamMembers.map((member, idx) => (
-                    <div key={member.userTaskId || idx} className="flex flex-col gap-4 p-4 bg-white border rounded-xl sm:flex-row sm:items-center">
+                    <div key={member.userTaskId || idx} className="flex flex-col gap-6 p-4 bg-white border rounded-xl sm:flex-row sm:items-center">
                       <div className="flex items-center flex-1 gap-3">
                         <div className="flex items-center justify-center w-12 h-12 bg-black rounded-xl">
-                          {member.role == "member" ? (<UserIcon className="w-6 h-6 text-white" />) : (<ShieldUser className="w-6 h-6 text-white" />
-                          )}
+                          {member.role == "member" ? (<UserIcon className="w-6 h-6 text-white" />) : (<ShieldUser className="w-6 h-6 text-white" /> )}
                         </div>
                         <div>
                           <div className="font-semibold text-gray-900">{member.user?.name || "—"}</div>
@@ -317,8 +366,8 @@ const TaskDetails: React.FC = () => {
                       </div>
 
                       <div className="flex items-center gap-4">
-                        <div>
-                          <p className="text-xs text-gray-500">Role</p>
+                        <div className="flex">
+                      
                           <div className="mt-1">
                             {member.role === "member" && member.status === "done" && (
                               <select
@@ -326,6 +375,12 @@ const TaskDetails: React.FC = () => {
                                 defaultValue={member.status || ""}
                                 onChange={async (e) => {
                                   const newStatus = e.target.value;
+                                  if (newStatus === "rejected from Member_can_rejected") {
+                                    setSelectedMemberId(member.userTaskId);
+                                    setShowRejectPopup(true);
+                                    e.target.value = "";
+                                    return;
+                                  }
                                   try {
                                     const token = localStorage.getItem("token") || "";
                                     await axios.put(
@@ -334,7 +389,7 @@ const TaskDetails: React.FC = () => {
                                       { headers: { Authorization: `Bearer ${token}` } }
                                     );
                                     member.status = newStatus;
-    window.location.reload();
+                                    window.location.reload();
                                   } catch (err) {
                                     console.error("Update Status Error:", err);
                                   }
@@ -345,52 +400,54 @@ const TaskDetails: React.FC = () => {
                                 <option value="rejected from Member_can_rejected">Rejected</option>
                               </select>
                             )}
+                            {/* /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////// */}
+                            
+{member.role == "membercanapprove" && member.status!=="Approved"&&(
+                member.role == "membercanapprove" && allMembersFinished ?
+                              (
+                                <select
+                                  className="px-4 py-1 text-sm font-semibold border rounded-lg"
+                                  defaultValue={member.status || ""}
+                                  onChange={(e) => {
+                                    const newStatus = e.target.value;
 
-                            {member.role == "membercanapprove" && allMembersFinished ? (
-                              <select
-                                className="px-4 py-1 text-sm font-semibold border rounded-lg"
-                                defaultValue={member.status || ""}
-                                onChange={async (e) => {
-                                  const newStatus = e.target.value;
-                                  try {
-                                    const token = localStorage.getItem("token") || "";
-                                    await axios.put(
-                                      `https://taskatbcknd.wegostation.com/api/user/tasks/review/${member.userTaskId}`,
-                                      { status: newStatus },
-                                      { headers: { Authorization: `Bearer ${token}` } }
-                                    );
-                                    member.status = newStatus;
-    window.location.reload();
-                                  } catch (err) {
-                                    console.error("Update Status Error:", err);
-                                  }
-                                }}
-                              >
-                                <option value="">
-                                  Select
-                                </option>
-                                {member.status ==="pending"&&<option value="in_progress">In Progress</option>}
-                                {member.status==="Pending_edit'" &&<option value="in_progress_edit">In Progress Edit</option> }
-            {(member.status === "in_progress" || member.status === "in_progress_edit") && <option value="done">Done</option>}
-            {member.status === "done"&&
-            <>
-            <option value="Approved from Member_can_approve">
-                                  Approved
-                                </option>
-                                
-                                <option value="rejected from Member_can_rejected">
-                                  Rejected
-                                </option>
-            </>
-                                }
-                              </select>
 
-                            ) : (
-                              <span className="inline-flex items-center gap-2">
-                                {getRoleIcon(member.role)}
-                                <span className="text-sm font-semibold">{member.role || "—"}</span>
-                              </span>
-                            )}
+
+                                    updateStatus(newStatus, member.userTaskId, undefined);
+                                  }}
+
+                                >
+                                  <option value="">Select</option>
+
+                                  {member.status === "pending" && (
+                                    <option value="in_progress">In Progress</option>
+                                  )}
+
+                                  {member.status === "pending_edit" && (
+                                    <option value="in_progress_edit">In Progress Edit</option>
+                                  )}
+
+                                  {(member.status === "in_progress" ||
+                                    member.status === "in_progress_edit") && (
+                                      <option value="done">Done</option>
+                                    )}
+
+                                  {member.status === "done" && (
+                                    <>
+                                      <option value="Approved from Member_can_approve">Approved</option>
+                                      <option value="rejected from Member_can_rejected">Rejected</option>
+                                    </>
+                                  )}
+                                </select>
+                              )
+                              : (
+                              null
+                              )
+                              
+)}
+                            
+              
+                              
                           </div>
                         </div>
 
@@ -399,10 +456,16 @@ const TaskDetails: React.FC = () => {
                         <div>
                           <p className="text-xs text-gray-500">Status</p>
                           <span className={`px-2 py-1 rounded-lg text-sm font-semibold ${getStatusColor(member.status)}`}>
-                            {member.status==="Approved from Member_can_approve" ?"Approved" : member.status}
+                            {member.status === "Approved from Member_can_approve" ? "Approved" : member.status}
                           </span>
                         </div>
-
+  <div className="flex flex-col gap-1">
+                            <p className="text-xs text-gray-500">Role</p>
+                            <span className="inline-flex items-center gap-2">
+                                  {getRoleIcon(member.role)}
+                                  <span className="text-sm font-semibold">{member.role || "—"}</span>
+                                </span>
+                          </div>
                         {/* Finished */}
                         <div>
                           <p className="text-xs text-gray-500">Finished</p>
@@ -571,6 +634,55 @@ const TaskDetails: React.FC = () => {
           </aside>
         </div>
       </div>
+      {showRejectPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="p-6 bg-white rounded-lg shadow-lg w-80">
+
+            <h2 className="mb-3 text-lg font-bold">  Rejected Reason</h2>
+
+            <select
+              className="w-full p-2 border rounded"
+              onChange={(e) => setSelectedReason(e.target.value)}
+            >
+              <option value="">اختر السبب</option>
+              {reasons.map((item) => (
+                <option key={item._id} value={item._id}>
+                  {item.reason} ( -{item.points} points )
+                </option>
+              ))}
+            </select>
+
+            <div className="flex justify-end gap-3 mt-4">
+              <button
+                className="px-4 py-1 bg-gray-300 rounded"
+                onClick={() => setShowRejectPopup(false)}
+              >
+                Canel
+              </button>
+
+              <button
+                className="px-4 py-1 text-white bg-red-600 rounded"
+                onClick={() => {
+                  if (!selectedReason) {
+                    toast("Sholud Select Reason");
+                    return;
+                  }
+
+                  updateStatus(
+                    "rejected from Member_can_rejected",
+                    selectedMemberId,
+                    selectedReason
+                  );
+                }}
+              >
+                Yes
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

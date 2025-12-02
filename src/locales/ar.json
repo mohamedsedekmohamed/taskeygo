@@ -37,7 +37,20 @@
   "Pleaseenterdepartmentname": "من فضلك أدخل اسم القسم",
   "DeleteDepartmentConfirmTitle": "حذف القسم: {{name}}؟",
   "DeleteDepartmentConfirmText": "لا يمكن التراجع عن هذا الإجراء",
+ "Task": "المهمة",
+  "Title": "العنوان",
+  
+  "CreatedBy": "تم الإنشاء بواسطة",
+  "file": "الملف",
+  "download": "تحميل",
 
+  "usertask": "مهمة المستخدم",
+
+  "TaskDeletedSuccessfully": "تم حذف المهمة بنجاح",
+  "FailedToDeleteTask": "فشل في حذف المهمة",
+ 
+  "FailedToLoadTasks": "فشل تحميل المهام",
+  "NoTasksFound": "لم يتم العثور على مهام",
   "Pleaseenterprojectname": "يرجى إدخال اسم المشروع",
   "Pleaseenterprojectdescription": "يرجى إدخال وصف المشروع",
  "Projects": "المشاريع",

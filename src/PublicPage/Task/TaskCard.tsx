@@ -84,7 +84,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, fetchTasks }) => {
           >
             <option value="">Select</option>
             {status==="pending" &&<option value="in_progress">In Progress</option> }
-            {status==="Pending_edit'" &&<option value="in_progress_edit">In Progress Edit</option> }
+            {status==="pending_edit" &&<option value="in_progress_edit">In Progress Edit</option> }
             {(status === "in_progress" || status === "in_progress_edit") && <option value="done">Done</option>}
             {/* {status === "rejected" && <option value="pending_edit">pending_edit</option>}<option value="done">Done</option> */}
           </select>
