@@ -263,6 +263,7 @@ const TaskDetails: React.FC = () => {
               <p className="mt-1 text-sm text-gray-500">{info.task?.projectId?.description}</p>
             </div>
           </div>
+          
         </div>
 
         <div className="grid gap-6 lg:grid-cols-3">
@@ -346,14 +347,16 @@ const TaskDetails: React.FC = () => {
                   <Users className="w-5 h-5" />
                   <h3 className="text-lg font-semibold text-gray-900">Team Members</h3>
                 </div>
-                <span className="text-sm text-gray-600">{info.teamMembers?.length ?? 0} Members</span>
+<span className="text-sm text-gray-600">
+  {info.teamMembers.filter(m => m.role === "member").length ?? 0} Members
+</span>
               </div>
 
-              <div className="p-6 space-y-4">
+              <div className="p-2 space-y-4">
                 {info.teamMembers && info.teamMembers.length > 0 ? (
-                  info.teamMembers.map((member, idx) => (
-                    <div key={member.userTaskId || idx} className="flex flex-col gap-6 p-4 bg-white border rounded-xl sm:flex-row sm:items-center">
-                      <div className="flex items-center flex-1 gap-3">
+                  info.teamMembers.filter(member=>member.role==="member").map((member, idx) => (
+                    <div key={member.userTaskId || idx} className="flex flex-col gap-2 p-4 bg-white border rounded-xl sm:flex-row sm:items-center">
+                      <div className="flex items-center flex-1 gap-1">
                         <div className="flex items-center justify-center w-12 h-12 bg-black rounded-xl">
                           {member.role == "member" ? (<UserIcon className="w-6 h-6 text-white" />) : (<ShieldUser className="w-6 h-6 text-white" /> )}
                         </div>
@@ -366,7 +369,7 @@ const TaskDetails: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2">
                         <div className="flex">
                       
                           <div className="mt-1">
@@ -456,7 +459,7 @@ const TaskDetails: React.FC = () => {
                         {/* Status */}
                         <div>
                           <p className="text-xs text-gray-500">Status</p>
-                          <span className={`px-2 py-1 rounded-lg text-sm font-semibold ${getStatusColor(member.status)}`}>
+                          <span className={`px-1 py-1 rounded-lg text-sm font-semibold ${getStatusColor(member.status)}`}>
                             {member.status === "Approved from Member_can_approve" ? "Approved" : member.status}
                           </span>
                         </div>
@@ -472,11 +475,11 @@ const TaskDetails: React.FC = () => {
                           <p className="text-xs text-gray-500">Finished</p>
                           <div className="mt-1">
                             {member.isFinished ? (
-                              <div className="flex items-center gap-2 font-semibold text-green-600">
+                              <div className="flex items-center gap-1 font-semibold text-green-600">
                                 <CheckCircle className="w-5 h-5" /> Yes
                               </div>
                             ) : (
-                              <div className="flex items-center gap-2 font-semibold text-red-600">
+                              <div className="flex items-center gap-1 font-semibold text-red-600">
                                 <XCircle className="w-5 h-5" /> No
                               </div>
                             )}
@@ -521,6 +524,121 @@ const TaskDetails: React.FC = () => {
                   <span className={`px-2 py-1 mt-1 rounded-lg text-sm font-semibold ${getStatusColor(info.currentUser?.status)}`}>
                     {info.currentUser?.status || "—"}
                   </span>
+                  {/*  */}
+   {info.teamMembers && info.teamMembers.length > 0 ? (
+                  info.teamMembers.filter(member=>member.role==="membercanapprove").map((member, idx) => (
+                    <div key={member.userTaskId || idx} className="flex flex-col gap-6 p-4 bg-white border rounded-xl sm:flex-row sm:items-center">
+                    
+
+                      <div className="flex items-center gap-4">
+                        <div className="flex">
+                      
+                          <div className="mt-1">
+       
+       {member.role === "membercanapprove" &&
+       member.isFinished ?(
+        <p>
+          You have already approved or rejected this task.
+        </p>
+       ):(
+        <>
+        <select
+                                  className="px-4 py-1 text-sm font-semibold border rounded-lg"
+                                  defaultValue={member.status || ""}
+                                  onChange={(e) => {
+                                    const newStatus = e.target.value;
+
+
+
+                                    updateStatus(newStatus, member.userTaskId, undefined);
+                                  }}
+
+                                >
+                                  <option value="">Select</option>
+
+                                  {member.status === "pending" && (
+                                    <option value="in_progress">In Progress</option>
+                                  )}
+
+                                  {member.status === "pending_edit" && (
+                                    <option value="in_progress_edit">In Progress Edit</option>
+                                  )}
+
+                                  {(member.status === "in_progress" ||
+                                    member.status === "in_progress_edit") && (
+                                      <option value="done">Done</option>
+                                    )}
+
+                                  {member.status === "done" && allMembersFinished && (
+                                    <>
+                                      <option value="Approved from Member_can_approve">Approved</option>
+                                      <option value="rejected from Member_can_rejected">Rejected</option>
+                                    </>
+                                  )}
+                                </select>
+       </>)
+       
+      }
+                     {/*    ------------------------------------------------------------------- */}
+{/* {member.role == "membercanapprove"&&(
+  
+                              (
+                                <select
+                                  className="px-4 py-1 text-sm font-semibold border rounded-lg"
+                                  defaultValue={member.status || ""}
+                                  onChange={(e) => {
+                                    const newStatus = e.target.value;
+
+
+
+                                    updateStatus(newStatus, member.userTaskId, undefined);
+                                  }}
+
+                                >
+                                  <option value="">Select</option>
+
+                                  {member.status === "pending" && (
+                                    <option value="in_progress">In Progress</option>
+                                  )}
+
+                                  {member.status === "pending_edit" && (
+                                    <option value="in_progress_edit">In Progress Edit</option>
+                                  )}
+
+                                  {(member.status === "in_progress" ||
+                                    member.status === "in_progress_edit") && (
+                                      <option value="done">Done</option>
+                                    )}
+
+                                  {member.status === "done" && allMembersFinished && (
+                                    <>
+                                      <option value="Approved from Member_can_approve">Approved</option>
+                                      <option value="rejected from Member_can_rejected">Rejected</option>
+                                    </>
+                                  )}
+                                </select>
+                              )
+                             
+                              
+)} */}
+                            
+                                   {/*    ------------------------------------------------------------------- */}
+
+                              
+                          </div>
+                        </div>
+
+
+                       
+                        
+                      </div>
+                    </div>
+
+                  ))
+                ) : (
+                  <p className="text-gray-600">No team members found.</p>
+                )}
+                  {/*  */}
                 </div>
 
                 <div className="p-3 border rounded-lg">

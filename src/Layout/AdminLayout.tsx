@@ -42,7 +42,7 @@ const AdminLayout: React.FC = () => {
       className={`
         flex h-screen overflow-hidden relative
         transition-colors duration-300
-        ${theme === "dark" ? "bg-[#0b0b0b] text-white" : "bg-[#EDF2EC] text-maincolor"}
+        ${theme === "dark" ? "bg-[#0b0b0b] text-white" : " text-maincolor"}
       `}
     >
       <aside
@@ -69,7 +69,7 @@ const AdminLayout: React.FC = () => {
         <main
           className={`
             flex-1 w-full p-4 transition-colors duration-300
-            ${theme === "dark" ? "bg-[#0b0b0b] text-white" : "bg-[#EDF2EC] text-maincolor"}
+            ${theme === "dark" ? "bg-[#0b0b0b] text-white" : " text-maincolor"}
           `}
         >
           <Outlet />

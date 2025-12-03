@@ -272,6 +272,34 @@
 "AddUser":"Add User",
   "Member":"Member",
   "admin":"Admin",
-  "Membercanapprove":"Member can approve"
+  "Membercanapprove":"Member can approve",
+
+"RejectedReasonDeletedSuccessfully": "Rejected reason deleted successfully",
+"FailedToDeleteRejectedReason": "Failed to delete rejected reason",
+
+"Reason": "Reason",
+"Points": "Points",
+"userintask": "User in Task",
+
+
+"RejectedReason": "Rejected Reason",
+"FailedToLoadRejectedReasons": "Failed to load rejected reasons",
+"NoRejectedReasonsFound": "No rejected reasons found",
+"AddRejectedReason": "Add Rejected Reason",
+"EditRejectedReason": "Edit Rejected Reason",
+"PleaseEnterReason": "Please enter a reason",
+"PointsMustBeGreaterThanZero": "Points must be greater than zero",
+"RejectedReasonAddedSuccessfully": "Rejected reason added successfully",
+"FailedToAddRejectedReason": "Failed to add rejected reason",
+"RejectedReasonUpdatedSuccessfully": "Rejected reason updated successfully",
+"FailedToUpdateRejectedReason": "Failed to update rejected reason",
+"FailedToLoadRejectedReason": "Failed to load rejected reason",
+
+"visibility":"view visibility",
+"project":"Project",
+"Details":"Details",
+"SubscriptionDetails":"Subscription Details"
+
+
 
 }

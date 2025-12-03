@@ -138,8 +138,7 @@ const Subscriptions: React.FC = () => {
           onClick={() => openPopup(row)}
           className="flex items-center gap-2 px-3 py-1 text-white transition rounded-lg bg-maincolor hover:bg-maincolor/80"
         >
-          <span className="text-sm material-icons">visibility</span>
-          {t("View")}
+          <span className="text-sm material-icons">{t("visibility")}</span>
         </button>
       ),
     },

@@ -39,7 +39,29 @@
   "DeleteDepartmentConfirmText": "لا يمكن التراجع عن هذا الإجراء",
  "Task": "المهمة",
   "Title": "العنوان",
-  
+"AddRejectedReason": "إضافة سبب رفض",
+"EditRejectedReason": "تعديل سبب رفض",
+"userintask": "المستخدم في المهمة",
+
+"PleaseEnterReason": "الرجاء إدخال السبب",
+"PointsMustBeGreaterThanZero": "النقاط يجب أن تكون أكبر من صفر",
+"RejectedReasonAddedSuccessfully": "تمت إضافة سبب الرفض بنجاح",
+"FailedToAddRejectedReason": "فشل في إضافة سبب الرفض",
+"RejectedReasonUpdatedSuccessfully": "تم تحديث سبب الرفض بنجاح",
+"FailedToUpdateRejectedReason": "فشل في تحديث سبب الرفض",
+"FailedToLoadRejectedReason": "فشل في تحميل سبب الرفض",
+
+"RejectedReasonDeletedSuccessfully": "تم حذف سبب الرفض بنجاح",
+"FailedToDeleteRejectedReason": "فشل في حذف سبب الرفض",
+
+"Reason": "السبب",
+"Points": "النقاط",
+
+
+"RejectedReason": "سبب الرفض",
+"FailedToLoadRejectedReasons": "فشل في تحميل أسباب الرفض",
+"NoRejectedReasonsFound": "لا توجد أسباب رفض"
+,
   "CreatedBy": "تم الإنشاء بواسطة",
   "file": "الملف",
   "download": "تحميل",
@@ -276,7 +298,16 @@
 
   "Pleaseenterplanname": "يرجى إدخال اسم خطة صالح",
   "Pleasevalidprices": "يجب أن تكون الأسعار أرقام صحيحة",
-  "Pleaselimits": "يجب أن تكون حدود المشاريع والأعضاء أرقام موجبة"
+  "Pleaselimits": "يجب أن تكون حدود المشاريع والأعضاء أرقام موجبة",
+
+"DepartmentName": "اسم القسم","visibility": "عرض الكامل ",
+"project": "المشروع",
+"Details": "التفاصيل",
+"SubscriptionDetails": "تفاصيل الاشتراك"
+
+
+
+
 
 
 

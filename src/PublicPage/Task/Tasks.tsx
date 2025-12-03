@@ -303,7 +303,6 @@ const Tasks: React.FC = () => {
       </div>
     );
 
-  // الأعمدة المسموح فيها السحب بناءً على المهمة النشطة
   const allowedStatuses = activeId
     ? getAllowedStatuses(tasks.find(t => t._id === activeId)?.status || "")
     : columns.map(c => c.id);
