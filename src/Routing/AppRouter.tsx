@@ -41,10 +41,6 @@ import AddUserProject from '../Admin/Project/AddUserProject'
 import UserTaskProject from "../Admin/Task/UserTaskProject";
 import AddUserTaskProject from "../Admin/Task/AddUserTaskProject";
 //user
-// import Plansuser from "../Users/Plans/Plans";
-// import Paymentuser from "../Users/Payment/Payment";
-// import PaymentMethodsuser from "../Users/PaymentMethods/PaymentMethods";
-//public page
 import Home from "../PublicPage/Home";
 import Plansp from '../PublicPage/Plans/Plans'
 import Profile from '../PublicPage/Profile'
