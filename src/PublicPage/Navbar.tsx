@@ -11,7 +11,7 @@ const navLinks = [
   { name: "Rejections", href: "/user/rejections" },
   { name: "Project", href: "/user/project" },
   // { name: "Task", href: "/user/task" },
-  { name: "payment Methods", href: "/user/PaymentMethods" },
+  // { name: "payment Methods", href: "/user/PaymentMethods" },
 ];
 
 const Navbar = () => {
