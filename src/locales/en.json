@@ -20,6 +20,8 @@
   "ProjectDescription": "Description",
    "Task": "Task",
   "Title": "Title",
+  "ProjectRemaining": "Projects Remaining",
+  "ProjectCreated": "Projects Created",
  
   "CreatedBy": "Created By",
   "file": "File",
@@ -298,7 +300,11 @@
 "visibility":"view visibility",
 "project":"Project",
 "Details":"Details",
-"SubscriptionDetails":"Subscription Details"
+"SubscriptionDetails":"Subscription Details",
+  "PleaseSelectStartDate": "Please select a start date",
+  "PleaseSelectEndDate": "Please select an end date",
+  "InvalidDateFormat": "Invalid date format",
+  "StartDateCannotBeAfterEndDate": "Start date cannot be after end date"
 
 
 

@@ -196,9 +196,9 @@ const Subscriptions: React.FC = () => {
 
               <InfoCard icon={<AiOutlineDatabase className="text-2xl text-pink-500" />} label={t("SubscriptionType")} value={selected.PaymentId?.subscriptionType} />
 
-              <InfoCard icon={<AiOutlineGlobal className="text-2xl text-blue-400" />} label={t("WebsitesCreated")} value={selected.websites_created_count} />
+              <InfoCard icon={<AiOutlineGlobal className="text-2xl text-blue-400" />} label={t("ProjectCreated")} value={selected.websites_created_count} />
 
-              <InfoCard icon={<AiOutlineGlobal className="text-2xl text-indigo-500" />} label={t("WebsitesRemaining")} value={selected.websites_remaining_count} />
+              <InfoCard icon={<AiOutlineGlobal className="text-2xl text-indigo-500" />} label={t("ProjectRemaining")} value={selected.websites_remaining_count} />
             </div>
 
             <div className="mt-6 text-right">

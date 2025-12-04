@@ -26,6 +26,7 @@ const InputField: React.FC<InputFieldProps> = ({
   const hasValue = value.trim() !== "";
   const { theme } = useTheme();
   const { t } = useTranslation();
+const today = new Date().toISOString().split("T")[0];
 
   return (
     <div className="flex flex-col w-full max-w-md gap-2">
@@ -44,7 +45,7 @@ const InputField: React.FC<InputFieldProps> = ({
         name={name}
         disabled={disabled}
         value={value}
-        min={min}
+  min={type === "date" ? today : min}
         onChange={onChange}
         maxLength={maxLength}
         placeholder={`${t("Enter")} ${t(placeholder)}`}

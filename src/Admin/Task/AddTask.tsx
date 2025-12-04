@@ -32,6 +32,7 @@ interface TaskResponse {
     _id?: string;
     name: string;
     description: string;
+    start_date?: string;
     projectId?: { _id: string; name: string };
     Depatment_id?: { _id: string; name: string };
     priority?: "low" | "medium" | "high";
@@ -60,6 +61,7 @@ const { get: getTask } = useGet<TaskResponse>();
   const [department, setDepartment] = useState("");
   const [priority, setPriority] = useState<number | null>(null);
   const [end_date, setEndDate] = useState("");
+  const [start_date, setStartDate] = useState("");
   const [recorde, setRecorde] = useState("");
 
 const [file, setFile] = useState<File | string | null>(null);
@@ -105,6 +107,7 @@ const [file, setFile] = useState<File | string | null>(null);
             );
 
             setEndDate(task.end_date ? task.end_date.split("T")[0] : "");
+            setStartDate(task.start_date ? task.start_date.split("T")[0] : "");
       if(task.recorde !==null) {  
         setRecorde(task.recorde || "");
       } 
@@ -195,7 +198,31 @@ if (description.trim().length < 5) {
     toast.error(t("PleaseSelectEndDate"));
     return;
   }
+  if (!start_date) {
+    toast.error(t("PleaseSelectEndDate"));
+    return;
+  }
+const toStartOfDayTimestamp = (dateStr: string) => {
+  const parsed = Date.parse(dateStr);
+  if (Number.isNaN(parsed)) return NaN;
+  const d = new Date(parsed);
+  d.setHours(0, 0, 0, 0);
+  return d.getTime();
+};
 
+const startTs = toStartOfDayTimestamp(start_date);
+const endTs = toStartOfDayTimestamp(end_date);
+
+if (Number.isNaN(startTs) || Number.isNaN(endTs)) {
+  toast.error(t("InvalidDateFormat")); // ضع مفتاح ترجمة مناسب
+  return;
+}
+
+// الآن نتحقق: لو البداية بعد النهاية -> خطأ
+if (startTs > endTs) {
+  toast.error(t("StartDateCannotBeAfterEndDate")); // ضع مفتاح ترجمة مناسب
+  return;
+}
 
   try {
     const priorityText =
@@ -210,6 +237,7 @@ if (description.trim().length < 5) {
     if (projectId) formData.append("projectId", projectId);
     if (department) formData.append("Depatment_id", department);
     if (end_date) formData.append("end_date", end_date);
+    if (start_date) formData.append("start_date", start_date);
      if (file)formData.append("file", file);
 
   
@@ -298,12 +326,18 @@ if (description.trim().length < 5) {
         />
 
         <InputField
+          placeholder={t("StartDate")}
+          type="date"
+          value={start_date}
+          onChange={(e) => setStartDate(e.target.value)}
+        />
+
+        <InputField
           placeholder={t("EndDate")}
           type="date"
           value={end_date}
           onChange={(e) => setEndDate(e.target.value)}
         />
-
         <div className="flex flex-col gap-2">
           <label className="text-sm font-medium">{t("UploadFileOrRecord")}</label>
 

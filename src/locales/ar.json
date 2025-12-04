@@ -42,7 +42,8 @@
 "AddRejectedReason": "إضافة سبب رفض",
 "EditRejectedReason": "تعديل سبب رفض",
 "userintask": "المستخدم في المهمة",
-
+"ProjectCreated":" تم إنشاء المشروع",
+"ProjectRemaining":"المشاريع المتبقية",
 "PleaseEnterReason": "الرجاء إدخال السبب",
 "PointsMustBeGreaterThanZero": "النقاط يجب أن تكون أكبر من صفر",
 "RejectedReasonAddedSuccessfully": "تمت إضافة سبب الرفض بنجاح",
@@ -303,7 +304,11 @@
 "DepartmentName": "اسم القسم","visibility": "عرض الكامل ",
 "project": "المشروع",
 "Details": "التفاصيل",
-"SubscriptionDetails": "تفاصيل الاشتراك"
+"SubscriptionDetails": "تفاصيل الاشتراك",
+  "PleaseSelectStartDate": "يرجى اختيار تاريخ البدء",
+  "PleaseSelectEndDate": "يرجى اختيار تاريخ الانتهاء",
+  "InvalidDateFormat": "صيغة التاريخ غير صحيحة",
+  "StartDateCannotBeAfterEndDate": "لا يمكن أن يكون تاريخ البداية بعد تاريخ النهاية"
 
 
 

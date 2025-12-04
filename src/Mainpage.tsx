@@ -1,13 +1,14 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, useMotionTemplate, useScroll, useTransform } from "framer-motion";
 import { FaUserTie, FaUser } from "react-icons/fa";
 import { FiArrowRight } from "react-icons/fi";
 import Lenis from "@studio-freight/lenis";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Homepic from './assets/home.jfif';
 import { LuCircleArrowOutDownRight } from "react-icons/lu";
 import Footer from './Footer'
 import { FiArrowUpRight } from "react-icons/fi";
+import axios from "axios";
 const SECTION_HEIGHT = 1500;
 // Lenis wrapper
 const LenisWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -36,8 +37,9 @@ const Mainpage: React.FC = () => {
       <LenisWrapper>
         <Nav />
         <DrawCircleText />
-        <Hero />
         <TextParallaxContentExample />
+        {/* <Hero /> */}
+        <Plans/>
         {/* <LoginSection /> */}
         <Schedule />
         <Footer />
@@ -353,6 +355,131 @@ const ScheduleItem = ({ title, date }: { title: string; date: string; }) => (
       <LuCircleArrowOutDownRight />
     </div>
   </motion.div>
+);
+
+
+interface Plan {
+  _id: string;
+  name: string;
+  price_monthly: number;
+  price_annually: number;
+  projects_limit: number;
+  members_limit: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface ApiResponse {
+  success: boolean;
+  data: {
+    message: string;
+    plans: Plan[];
+  };
+}
+const Plans: React.FC = () => {
+  const [plans, setPlans] = useState<Plan[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+ const navigator = useNavigate();
+  const fetchPlans = async () => {
+    try {
+      const res = await axios.get<ApiResponse>(
+        "https://taskatbcknd.wegostation.com/api/user/plans"
+      );
+
+      setPlans(res.data.data.plans || []);
+    } catch (err) {
+      console.error("Error fetching plans:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchPlans();
+  }, []);
+
+  if (loading) {
+    return <p className="py-10 text-center text-gray-600">Loading...</p>;
+  }
+
+  return (
+    <div className="max-w-5xl px-4 py-8 mx-auto sm:px-6 sm:py-12 lg:px-8">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
+
+        {plans.map((plan) => (
+          <div
+            key={plan._id}
+            className={`rounded-2xl border p-6 shadow-xs sm:px-8 lg:p-12 
+              border-gray-200
+          `}
+          >
+            <div className="text-center">
+              <h2 className="text-lg font-medium text-white">
+                {plan.name}
+              </h2>
+
+              <p className="mt-2 sm:mt-4">
+                <strong className="text-3xl font-bold text-white/80 sm:text-4xl">
+                  {plan.price_monthly}$
+                </strong>
+                <span className="text-sm font-medium text-gray-700">
+                  /month
+                </span>
+              </p>
+
+              <p className="mt-1 text-sm text-gray-500">
+                {plan.price_annually}$ / year
+              </p>
+            </div>
+
+            <ul className="mt-6 space-y-2">
+              <ListItem text={`${plan.projects_limit} projects limit`} />
+              <ListItem text={`${plan.members_limit} members limit`} />
+             
+            </ul>
+
+            <button onClick={()=>navigator('/login')} className="block w-full px-12 py-3 mt-8 text-sm font-medium text-center text-white bg-black border border-indigo-600 rounded-full hover:bg-bg-dark/70 hover:ring-1 hover:ring-white">
+              Get Started
+            </button>
+          </div>
+        ))}
+
+      </div>
+    </div>
+  );
+};
+
+
+interface ListItemProps {
+  text: string;
+}
+
+const ListItem: React.FC<ListItemProps> = ({ text }) => (
+  <li className="flex items-center gap-3 p-3 transition-colors rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800">
+    <CheckIcon />
+    <span className="text-sm font-medium dark:text-gray-100 md:text-base">
+      {text}
+    </span>
+  </li>
+);
+
+const CheckIcon: React.FC = () => (
+  <div className="flex items-center justify-center flex-shrink-0 w-6 h-6 rounded-full dark:bg-gray-100">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+      strokeWidth={3}
+      stroke="currentColor"
+      className="w-4 h-4 text-white dark:text-black"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M4.5 12.75l6 6 9-13.5"
+      />
+    </svg>
+  </div>
 );
 
 export default Mainpage;
