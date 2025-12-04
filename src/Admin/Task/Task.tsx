@@ -38,10 +38,8 @@ interface UserReasons {
 
 interface TaskResponse {
   success: boolean;
-  tasks: {
-    active: TaskType[];
-    inactive: TaskType[];
-  };
+    activeTasks: TaskType[];
+    inactiveTasks: TaskType[];
 }
 
 const Task: React.FC = () => {
@@ -361,22 +359,22 @@ const Task: React.FC = () => {
     },
   ];
 
-  const activeTasks = data?.activeTasks || [];
-  const inactiveTasks = data?.inactiveTasks || [];
-
+  // derive filtered lists from data.active and data.inactive inside useMemo
   const filteredActiveTasks = useMemo(() => {
+    const activeTasks = data?.activeTasks || [];
     if (!searchQuery) return activeTasks;
-    return activeTasks.filter((t) =>
-      t.name.toLowerCase().includes(searchQuery.toLowerCase())
+    return activeTasks.filter((task: TaskType) =>
+      task.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [activeTasks, searchQuery]);
+  }, [data?.activeTasks, searchQuery]);
 
   const filteredInactiveTasks = useMemo(() => {
+    const inactiveTasks = data?.inactiveTasks || [];
     if (!searchQuery) return inactiveTasks;
-    return inactiveTasks.filter((t) =>
-      t.name.toLowerCase().includes(searchQuery.toLowerCase())
+    return inactiveTasks.filter((task: TaskType) =>
+      task.name.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [inactiveTasks, searchQuery]);
+  }, [data?.inactiveTasks, searchQuery]);
 
   if (loading) return <Loading />;
 

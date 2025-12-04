@@ -217,32 +217,32 @@ const Nav = () => (
 );
 
 
-const Hero = () => {
-  const { scrollY } = useScroll();
+// const Hero = () => {
+//   const { scrollY } = useScroll();
 
-  const clip1 = useTransform(scrollY, [0, SECTION_HEIGHT], [25, 0]);
-  const clip2 = useTransform(scrollY, [0, SECTION_HEIGHT], [75, 100]);
-  const clipPath = useMotionTemplate`polygon(${clip1}% ${clip1}%, ${clip2}% ${clip1}%, ${clip2}% ${clip2}%, ${clip1}% ${clip2}%)`;
-  const backgroundSize = useTransform(scrollY, [0, SECTION_HEIGHT + 500], ["170%", "100%"]);
-  const opacity = useTransform(scrollY, [SECTION_HEIGHT, SECTION_HEIGHT + 500], [1, 0]);
+//   const clip1 = useTransform(scrollY, [0, SECTION_HEIGHT], [25, 0]);
+//   const clip2 = useTransform(scrollY, [0, SECTION_HEIGHT], [75, 100]);
+//   const clipPath = useMotionTemplate`polygon(${clip1}% ${clip1}%, ${clip2}% ${clip1}%, ${clip2}% ${clip2}%, ${clip1}% ${clip2}%)`;
+//   const backgroundSize = useTransform(scrollY, [0, SECTION_HEIGHT + 500], ["170%", "100%"]);
+//   const opacity = useTransform(scrollY, [SECTION_HEIGHT, SECTION_HEIGHT + 500], [1, 0]);
 
-  return (
-    <div style={{ height: `calc(${SECTION_HEIGHT}px + 100vh)` }} className="relative w-full ">
-      <motion.div
-        className="sticky top-0 w-full h-screen"
-        style={{
-          clipPath,
-          backgroundSize,
-          opacity,
-          backgroundImage: `url(${Homepic})`,
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      />
-      <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-b from-gray-900/0 to-gray-900" />
-    </div>
-  );
-};
+//   return (
+//     <div style={{ height: `calc(${SECTION_HEIGHT}px + 100vh)` }} className="relative w-full ">
+//       <motion.div
+//         className="sticky top-0 w-full h-screen"
+//         style={{
+//           clipPath,
+//           backgroundSize,
+//           opacity,
+//           backgroundImage: `url(${Homepic})`,
+//           backgroundPosition: "center",
+//           backgroundRepeat: "no-repeat",
+//         }}
+//       />
+//       <div className="absolute bottom-0 left-0 right-0 h-96 bg-gradient-to-b from-gray-900/0 to-gray-900" />
+//     </div>
+//   );
+// };
 const DrawCircleText = () => {
   return (
     <div className="grid px-4 py-24 place-content-center text-yellow-50">
