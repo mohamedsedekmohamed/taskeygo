@@ -1,15 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import { motion, useMotionTemplate, useScroll, useTransform } from "framer-motion";
+// import { motion, useMotionTemplate, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { FaUserTie, FaUser } from "react-icons/fa";
 import { FiArrowRight } from "react-icons/fi";
 import Lenis from "@studio-freight/lenis";
 import { Link, useNavigate } from "react-router-dom";
-import Homepic from './assets/home.jfif';
+// import Homepic from './assets/home.jfif';
 import { LuCircleArrowOutDownRight } from "react-icons/lu";
 import Footer from './Footer'
 import { FiArrowUpRight } from "react-icons/fi";
 import axios from "axios";
-const SECTION_HEIGHT = 1500;
+// const SECTION_HEIGHT = 1500;
 // Lenis wrapper
 const LenisWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const lenisRef = useRef<Lenis | null>(null);
