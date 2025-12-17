@@ -65,6 +65,7 @@ export interface IUserTask {
   status: string;
   is_finished: boolean;
   role: string;
+  description: string;
   User_taskId: ISubTask[];
   createdAt: string;
   updatedAt: string;
@@ -95,7 +96,7 @@ const ProjectId: React.FC = () => {
   const [project, setProject] = useState<IProjectDetails | null>(null);
   const [members, setMembers] = useState<IProjectMember[]>([]);
   const [tasks, setTasks] = useState<IUserTask[]>([]);
-
+const [error,setError]=useState<boolean>(false)
   // ✅ تم التعديل هنا
   const [filteredTasks, setFilteredTasks] = useState<IUserTask[]>([]);
 
@@ -108,6 +109,7 @@ const ProjectId: React.FC = () => {
 
   useEffect(() => {
     const fetchProjectDetails = async () => {
+      setError(false)
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
@@ -122,6 +124,7 @@ const ProjectId: React.FC = () => {
           setFilteredTasks(response.data.data.tasks); // نفس النوع
         }
       } catch (error) {
+        setError(true)
         console.error("Error fetching project details:", error);
       } finally {
         setLoading(false);
@@ -197,6 +200,16 @@ const ProjectId: React.FC = () => {
       </div>
     );
 
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <div className="text-center">
+          <AlertCircle className="w-16 h-16 mx-auto mb-4 text-red-500" />
+          <p className="text-xl text-gray-700">error server</p>
+        </div>
+      </div>
+    );
+  }
   if (!project) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -389,8 +402,11 @@ placeholder="Search for a task..."
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-{filteredTasks.map((task, index) => {
- const isIndependent =
+     
+{filteredTasks
+  .filter(task => !(task.task_id === null && Array.isArray(task.User_taskId) && task.User_taskId.length === 0))
+  .map((task, index) => {
+     const isIndependent =
     Array.isArray(task.User_taskId) && task.User_taskId.length === 0;
 
   const isDependent =
@@ -464,10 +480,43 @@ placeholder="Search for a task..."
                             <ClipboardList className="w-5 h-5 text-blue-600" />
                           </div>
                         </div>
+<div className="p-4 mb-4 border border-gray-200 shadow-sm bg-gray-50 rounded-xl">
+  {/* Task Description */}
+  {task.description&&(
+      <div className="flex items-start gap-3 mb-3">
+    <span className="flex-shrink-0 w-6 h-6 text-blue-600">
+      <ClipboardList className="w-6 h-6" />
+    </span>
+    <div>
+      <h4 className="text-sm font-semibold text-gray-700"> User Task Description</h4>
+      <p className="mt-1 text-sm text-gray-600 line-clamp-3">
+        {task.description ?? 'N/A'}
+      </p>
+    </div>
+  </div>
+  )}
 
-                        <p className="py-3 mb-4 text-sm text-gray-600 line-clamp-3">
-                          {task.task_id?.description ?? 'N/A'}
-                        </p>
+
+  {/* User Task Description */}
+  {task.task_id?.description&&(
+     <div className="flex items-start gap-3">
+    <span className="flex-shrink-0 w-6 h-6 text-green-600">
+      <UserCircle className="w-6 h-6" />
+    </span>
+    <div>
+      <h4 className="text-sm font-semibold text-gray-700"> Task Description</h4>
+      <p className="mt-1 text-sm text-gray-600 line-clamp-3">
+        {task.task_id?.description ?? 'N/A'}
+      </p>
+    </div>
+  </div>
+
+  )}
+ 
+  
+</div>
+
+                       
        {task.task_id?.file && (
  <ButtonDown file={task.task_id?.file} />
 
@@ -559,6 +608,7 @@ placeholder="Search for a task..."
                   </div>
                 );
               })}
+              
             </div>
           )}
         </div>

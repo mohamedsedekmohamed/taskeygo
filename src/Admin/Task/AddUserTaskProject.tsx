@@ -11,10 +11,12 @@ import axios from "axios";
 import { useTranslation } from "react-i18next";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
+import InputField from "../../Ui/InputField";
 
 interface UserTask {
   _id?: string;
   user_id: string; 
+  description: string; 
   task_id: string;
   User_taskId?: string[];
   role: "member" | "membercanapprove";
@@ -53,6 +55,7 @@ const AddUserTaskProject: React.FC = () => {
     user_id: "",
     task_id: taskId || "",
     role: "member",
+    description:"",
     User_taskId: [],
   });
 
@@ -96,6 +99,13 @@ const [usertask, setUsertask] = useState<UserReasons[]>([]);
 
   const handleSelectChange = (name: keyof UserTask, value: string) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSave = async () => {
@@ -144,7 +154,7 @@ const [usertask, setUsertask] = useState<UserReasons[]>([]);
 
   return (
     <div className="p-6 space-y-6">
-      <Titles title={isEdit ? t("EditUserProject") : t("AddUserProject")} />
+      <Titles title={isEdit ? t("EditUsertaskinproject") : t("AddUsertaskinProject")} />
       <div className="flex flex-col max-w-lg gap-4">
         <InputArrow
           placeholder={t("SelectUser")}
@@ -182,6 +192,12 @@ options={usertask.map((user) => ({
             { id: "member", name: t("Member") },
             { id: "membercanapprove", name: t("Membercanapprove") },
           ]}
+        />
+         <InputField
+          placeholder={t("Description")}
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
         />
 
         <ButtonDone

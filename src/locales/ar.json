@@ -308,7 +308,9 @@
   "PleaseSelectStartDate": "يرجى اختيار تاريخ البدء",
   "PleaseSelectEndDate": "يرجى اختيار تاريخ الانتهاء",
   "InvalidDateFormat": "صيغة التاريخ غير صحيحة",
-  "StartDateCannotBeAfterEndDate": "لا يمكن أن يكون تاريخ البداية بعد تاريخ النهاية"
+  "StartDateCannotBeAfterEndDate": "لا يمكن أن يكون تاريخ البداية بعد تاريخ النهاية",
+  "AddUsertaskinProject": "إضافة مهمة مستخدم في المشروع",
+  "EditUsertaskinproject": "تعديل مهمة المستخدم في المشروع"
 
 
 

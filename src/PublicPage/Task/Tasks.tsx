@@ -20,6 +20,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import Loader from "../../Component/Loading";
 
+// --- Interfaces ---
 interface User {
   _id: string;
   name: string;
@@ -55,9 +56,12 @@ interface ApiResponse {
 interface TaskCardProps {
   task: Task;
   isDragging?: boolean;
+  isUpdating?: boolean; // خاصية جديدة للتحميل
 }
 
-const TaskCard: React.FC<TaskCardProps> = ({ task, isDragging = false }) => {
+// --- Components ---
+
+const TaskCard: React.FC<TaskCardProps> = ({ task, isDragging = false, isUpdating = false }) => {
   const statusColors: Record<string, string> = {
     pending: "bg-yellow-100 text-yellow-800 border-yellow-300",
     pending_edit: "bg-orange-100 text-orange-800 border-orange-300",
@@ -70,10 +74,17 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, isDragging = false }) => {
 
   return (
     <div
-      className={`p-6 bg-white border rounded-lg shadow-sm transition-all cursor-move ${
+      className={`relative p-6 bg-white border rounded-lg shadow-sm transition-all cursor-move ${
         isDragging ? "opacity-60 shadow-2xl scale-105 rotate-3" : "hover:shadow-lg"
       }`}
     >
+      {/* Loading Overlay: يظهر فقط عند التحديث */}
+      {isUpdating && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/80 rounded-lg backdrop-blur-[1px]">
+           <div className="w-8 h-8 border-4 border-blue-200 rounded-full border-t-blue-600 animate-spin"></div>
+        </div>
+      )}
+
       <div className="flex items-start justify-between mb-3">
         <h3 className="font-bold text-gray-800">{task.task_id.name}</h3>
         <span className={`px-3 py-1 text-xs font-semibold rounded-full border ${statusColor}`}>
@@ -89,7 +100,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, isDragging = false }) => {
           <span className="font-medium">Role:</span> {task.role}
         </p>
         <p className={`mt-2 text-sm font-medium ${task.is_finished ? "text-green-600" : "text-orange-600"}`}>
-          {task.is_finished ? "Completed" : "In Progress"}
+          {task.is_finished ? "Completed" : ""}
         </p>
         <p className="pt-2 text-xs text-gray-500 border-t border-gray-200">
           Created: {new Date(task.createdAt).toLocaleDateString("en-US", {
@@ -103,7 +114,8 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, isDragging = false }) => {
   );
 };
 
-const SortableTask: React.FC<{ task: Task }> = ({ task }) => {
+// استقبال isUpdating وتمريرها
+const SortableTask: React.FC<{ task: Task; isUpdating: boolean }> = ({ task, isUpdating }) => {
   const {
     attributes,
     listeners,
@@ -120,7 +132,7 @@ const SortableTask: React.FC<{ task: Task }> = ({ task }) => {
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <TaskCard task={task} isDragging={isDragging} />
+      <TaskCard task={task} isDragging={isDragging} isUpdating={isUpdating} />
     </div>
   );
 };
@@ -130,16 +142,17 @@ interface DroppableColumnProps {
   title: string;
   tasks: Task[];
   count: number;
+  updatingTaskId: string | null; // استقبال معرف المهمة الجاري تحديثها
 }
 
-const DroppableColumn: React.FC<DroppableColumnProps> = ({ id, title, tasks, count }) => {
+const DroppableColumn: React.FC<DroppableColumnProps> = ({ id, title, tasks, count, updatingTaskId }) => {
   const { setNodeRef, isOver } = useDroppable({ id });
 
   return (
     <div
       ref={setNodeRef}
       className={`flex flex-col p-4 rounded-xl transition-colors ${
-        isOver ? "bg-blue-200 ring-2 ring-blue-400" : "border"
+        isOver ? "bg-blue-200 ring-2 ring-blue-400" : "border border-gray-300 bg-gray-50"
       }`}
     >
       <div className="flex items-center justify-between pb-3 mb-4 border-b border-gray-400">
@@ -155,7 +168,11 @@ const DroppableColumn: React.FC<DroppableColumnProps> = ({ id, title, tasks, cou
       >
         <div className="space-y-4 min-h-[200px] flex-1">
           {tasks.map(task => (
-            <SortableTask key={task._id} task={task} />
+            <SortableTask 
+              key={task._id} 
+              task={task} 
+              isUpdating={updatingTaskId === task._id} // هل هذه المهمة يتم تحديثها الآن؟
+            />
           ))}
 
           {tasks.length === 0 && (
@@ -172,28 +189,31 @@ const DroppableColumn: React.FC<DroppableColumnProps> = ({ id, title, tasks, cou
 };
 
 const Tasks: React.FC = () => {
-  const pathname = window.location.pathname; // "/user/task/692ecdd4dd4c821dda60e966"
-  const pathParts = pathname.split("/"); 
-  const id = pathParts[pathParts.length - 1]; // "692ecdd4dd4c821dda60e966"
+  const pathname = window.location.pathname;
+  const pathParts = pathname.split("/");
+  const id = pathParts[pathParts.length - 1];
 
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
   const [activeId, setActiveId] = useState<string | null>(null);
-  const columns = [
-  { id: "pending", title: "Pending" },
-  { id: "pending_edit", title: "Pending Edit" },
-  { id: "in_progress", title: "In Progress" },
-  { id: "in_progress_edit", title: "In Progress Edit" },
-  { id: "done", title: "Done" },
-];
-
   
+  // State لمعرفة المهمة التي يتم انتظار الـ API لها
+  const [updatingTaskId, setUpdatingTaskId] = useState<string | null>(null);
+
+  const columns = [
+    { id: "pending", title: "Pending" },
+    { id: "pending_edit", title: "Pending Edit" },
+    { id: "in_progress", title: "In Progress" },
+    { id: "in_progress_edit", title: "In Progress Edit" },
+    { id: "done", title: "Done" },
+  ];
+
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
-  
+
   const nextStatusMap: Record<string, string | null> = {
     pending: "in_progress",
     in_progress: "done",
@@ -203,13 +223,13 @@ const Tasks: React.FC = () => {
   };
 
   const getAllowedStatuses = (currentStatus: string) => {
-  const next = nextStatusMap[currentStatus];
-  if (!next) return []; // done أو حالة مالهاش انتقال
-  return [next]; // الحالة التالية فقط
-};
-
+    const next = nextStatusMap[currentStatus];
+    if (!next) return [];
+    return [next];
+  };
 
   const fetchTasks = useCallback(async () => {
+    setError("");
     const token = localStorage.getItem("token");
     if (!token) {
       setError("Authentication token not found");
@@ -258,28 +278,36 @@ const Tasks: React.FC = () => {
     const overId = over.id as string;
 
     const allowedStatuses = getAllowedStatuses(activeTask.status);
-    if (!allowedStatuses.includes(overId)) return; // منع السحب غير المسموح
+    if (!allowedStatuses.includes(overId)) return;
 
     if (overId === activeTask.status) return;
 
-    const previousTasks = [...tasks];
-    setTasks(prev => prev.map(t =>
-      t._id === activeTaskId ? { ...t, status: overId } : t
-    ));
+    // 1. تفعيل حالة التحميل للمهمة
+    setUpdatingTaskId(activeTaskId);
 
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No authentication token");
 
+      // 2. استدعاء الـ API وانتظار الرد
       await axios.put(
         `https://taskatbcknd.wegostation.com/api/user/tasks/${activeTaskId}`,
         { status: overId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+
+      // 3. تحديث الواجهة فقط بعد نجاح الـ API
+      setTasks(prev => prev.map(t =>
+        t._id === activeTaskId ? { ...t, status: overId } : t
+      ));
+
     } catch (err) {
       console.error("Failed to update task status:", err);
-      setTasks(previousTasks);
-      alert("Failed to update task status. Changes have been reverted.");
+      alert("Failed to update task status. Please try again.");
+      // لا نقوم بتحديث الـ Tasks، فيعود الكارت مكانه تلقائياً
+    } finally {
+      // 4. إيقاف حالة التحميل
+      setUpdatingTaskId(null);
     }
   };
 
@@ -318,7 +346,7 @@ const Tasks: React.FC = () => {
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-5">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {columns.map(column => {
               const columnTasks = tasks.filter(t => t.status === column.id);
               const isAllowed = allowedStatuses.includes(column.id);
@@ -336,6 +364,7 @@ const Tasks: React.FC = () => {
                     title={column.title}
                     tasks={columnTasks}
                     count={columnTasks.length}
+                    updatingTaskId={updatingTaskId} // تمرير الـ ID الجاري تحديثه
                   />
                 </div>
               );
@@ -350,6 +379,5 @@ const Tasks: React.FC = () => {
     </div>
   );
 };
-
 
 export default Tasks;

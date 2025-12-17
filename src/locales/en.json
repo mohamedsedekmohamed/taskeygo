@@ -304,7 +304,9 @@
   "PleaseSelectStartDate": "Please select a start date",
   "PleaseSelectEndDate": "Please select an end date",
   "InvalidDateFormat": "Invalid date format",
-  "StartDateCannotBeAfterEndDate": "Start date cannot be after end date"
+  "StartDateCannotBeAfterEndDate": "Start date cannot be after end date",
+   "AddUsertaskinProject": "Add User Task in Project",
+  "EditUsertaskinproject": "Edit User Task in Project"
 
 
 

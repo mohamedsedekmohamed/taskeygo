@@ -16,7 +16,6 @@ const LenisWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   const lenisRef = useRef<Lenis | null>(null);
 
   useEffect(() => {
-    localStorage.clear()
     lenisRef.current = new Lenis({ lerp: 0.05, smooth: true } as any);
 
     const animate = (time: number) => {
@@ -24,7 +23,7 @@ const LenisWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => 
       requestAnimationFrame(animate);
     };
     requestAnimationFrame(animate);
-    localStorage.clear()
+    localStorage.setItem("lang","ltr")
     return () => lenisRef.current?.destroy();
   }, []);
 

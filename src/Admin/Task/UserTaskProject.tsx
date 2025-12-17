@@ -186,17 +186,17 @@ const UserTaskProject: React.FC = () => {
         />
       </div>
 
-      {error && (
-        <p className="text-red-500">{t("Failedtoloadusers")}</p>
-      )}
+   {error ? (
+  <p className="text-red-500">{t("Failedtoloadusers")}</p>
+) : filteredUsers.length > 0 ? (
+  <Table<UserTaskItem> columns={columns} data={filteredUsers} />
+) : (
+  <p className={theme === "dark" ? "text-gray-400" : "text-gray-500"}>
+    {t("NoUsersFound")}
+  </p>
+)}
 
-      {filteredUsers.length > 0 ? (
-        <Table<UserTaskItem> columns={columns} data={filteredUsers} />
-      ) : (
-        <p className={theme === "dark" ? "text-gray-400" : "text-gray-500"}>
-          {t("NoUsersFound")}
-        </p>
-      )}
+     
     </div>
   );
 };

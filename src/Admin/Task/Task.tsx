@@ -196,7 +196,7 @@ const Task: React.FC = () => {
       if (!d) return null; // covers null, undefined, empty
       const parsed = Date.parse(d);
       if (Number.isNaN(parsed)) return null;
-      return new Date(parsed).toLocaleDateString("en-GB"); // or "ar-EG"
+      return new Date(parsed).toLocaleDateString("en-GB"); 
     };
 
     const startDate = formatDate(row.start_date);
