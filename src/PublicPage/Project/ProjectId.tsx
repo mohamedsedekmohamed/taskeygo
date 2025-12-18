@@ -402,158 +402,177 @@ placeholder="Search for a task..."
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-     
 {filteredTasks
-  .filter(task => !(task.task_id === null && Array.isArray(task.User_taskId) && task.User_taskId.length === 0))
+  // تم إزالة الـ .filter من هنا لكي تظهر جميع التاسكات
   .map((task, index) => {
-     const isIndependent =
-    Array.isArray(task.User_taskId) && task.User_taskId.length === 0;
+    
+    // --- 1. Logic Definitions ---
+    
+    const isCompleted = task.is_finished === true && task.status === "done";
 
-  const isDependent =
-    Array.isArray(task.User_taskId) && task.User_taskId.length > 0;
+    // التاسك معتمدة فقط لو المصفوفة موجودة وفيها عناصر
+    const isDependent = Array.isArray(task.User_taskId) && task.User_taskId.length > 0;
 
-  const dependencyFinished =
-    isDependent && task.User_taskId[0].is_finished === true;
+    const allDependenciesFinished = isDependent && task.User_taskId.every(dep => dep.is_finished === true);
 
-  const shouldShowTask = isIndependent || dependencyFinished;
+    const isIndependent = !isDependent;
 
+    const shouldShowTaskContent = isCompleted || isIndependent || allDependenciesFinished;
 
-                return (
-                  <div
-                    key={task._id}
-                    className={`relative p-6 transition-all duration-300 shadow-lg group rounded-2xl hover:-translate-y-1 ${
-                      shouldShowTask 
-                        ? 'bg-white hover:shadow-2xl' 
-                        : 'bg-gray-100 border-2 border-dashed border-gray-300'
-                    }`}
-                  >
-                    {/* Task Header */}
-                    <div className={`absolute top-0 left-0 w-full h-1 ${
-                      shouldShowTask 
-                        ? (index % 3 === 0 ? 'bg-blue-500' : 
-                           index % 3 === 1 ? 'bg-purple-500' : 'bg-green-500')
-                        : 'bg-gray-400'
-                    }`}></div>
+    const remainingDependencies = isDependent ? task.User_taskId.filter(t => !t.is_finished).length : 0;
 
-                    {!shouldShowTask ? (
-<div className="px-6 py-8 text-center">
-  <div className="inline-flex items-center justify-center w-16 h-16 mb-4 bg-gray-100 rounded-full">
-    <AlertCircle className="w-8 h-8 text-gray-400" />
-  </div>
-  
-  <h3 className="mb-3 text-xl font-bold text-gray-800">
-    {task.task_id?.name}
-  </h3>
-  
-  {task.task_id?.description && (
-    <p className="max-w-md mx-auto mb-4 text-sm leading-relaxed text-gray-600">
-      {task.task_id?.description}
-    </p>
-  )}
-  
-  <div className="inline-flex items-center gap-2 px-4 py-2 mb-4 border rounded-lg bg-amber-50 border-amber-200">
-    <AlertCircle className="w-4 h-4 text-amber-600" />
-    <p className="text-sm font-medium text-amber-800">
-  Waitting for another task be complete    </p>
-  </div>
-  
-  <div className="flex items-center justify-center gap-3 mb-4">
-    <span className={`px-4 py-1.5 text-xs font-semibold text-white rounded-full shadow-sm ${getStatusColor(task.status)}`}>
-      {task.status}
-    </span>
-  </div>
-  
-  <div className="pt-4 border-t border-gray-100">
-    <p className="text-xs text-gray-500">
-      Created on {formatDate(task.createdAt)}
-    </p>
-  </div>
-</div>
+    // تحديد اسم التاسك (لأن task_id قد يكون null)
+    const taskName = task.task_id?.name || "No name Task ";
+    const taskDescription = task.task_id?.description || task.description || "No description";
 
-                    ) : (
-                      <>
-                        <div className="flex items-start justify-between mb-4">
-                          <h3 className="flex-1 text-lg font-bold text-gray-800 line-clamp-2">
-                            {task.task_id?.name}
-                          </h3>
-                          <div className="p-2 bg-blue-100 rounded-lg">
-                            <ClipboardList className="w-5 h-5 text-blue-600" />
-                          </div>
-                        </div>
-<div className="p-4 mb-4 border border-gray-200 shadow-sm bg-gray-50 rounded-xl">
-  {/* Task Description */}
-  {task.description&&(
-      <div className="flex items-start gap-3 mb-3">
-    <span className="flex-shrink-0 w-6 h-6 text-blue-600">
-      <ClipboardList className="w-6 h-6" />
-    </span>
-    <div>
-      <h4 className="text-sm font-semibold text-gray-700"> User Task Description</h4>
-      <p className="mt-1 text-sm text-gray-600 line-clamp-3">
-        {task.description ?? 'N/A'}
-      </p>
-    </div>
-  </div>
-  )}
+    // --- 2. JSX Rendering ---
+    return (
+      <div
+        key={task._id}
+        className={`relative p-6 transition-all duration-300 shadow-lg rounded-2xl
+          ${isCompleted
+            ? "bg-green-50 border-2 border-green-500"
+            : shouldShowTaskContent
+              ? "bg-white hover:shadow-2xl hover:-translate-y-1"
+              : "bg-gray-100 border-2 border-dashed border-gray-300 opacity-95"
+          }
+        `}
+      >
+        {/* Task Header Stripe */}
+        {/* <div className={`absolute top-0 left-0 w-full h-1 ${
+          shouldShowTaskContent
+            ? (index % 3 === 0 ? 'bg-blue-500' : index % 3 === 1 ? 'bg-purple-500' : 'bg-green-500')
+            : 'bg-gray-400'
+        }`}></div> */}
 
+        {/* --- CASE A: BLOCKED / WAITING --- */}
+        {!shouldShowTaskContent ? (
+          <div className="px-6 py-8 text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 mb-4 bg-gray-200 rounded-full">
+              <AlertCircle className="w-8 h-8 text-gray-500" />
+            </div>
 
-  {/* User Task Description */}
-  {task.task_id?.description&&(
-     <div className="flex items-start gap-3">
-    <span className="flex-shrink-0 w-6 h-6 text-green-600">
-      <UserCircle className="w-6 h-6" />
-    </span>
-    <div>
-      <h4 className="text-sm font-semibold text-gray-700"> Task Description</h4>
-      <p className="mt-1 text-sm text-gray-600 line-clamp-3">
-        {task.task_id?.description ?? 'N/A'}
-      </p>
-    </div>
-  </div>
+            <h3 className="mb-3 text-xl font-bold text-gray-800">
+              {taskName}
+            </h3>
 
-  )}
- 
-  
-</div>
+            {taskDescription && (
+              <p className="max-w-md mx-auto mb-4 text-sm leading-relaxed text-gray-500 line-clamp-2">
+                {taskDescription}
+              </p>
+            )}
 
-                       
-       {task.task_id?.file && (
- <ButtonDown file={task.task_id?.file} />
+            <div className="inline-flex flex-col items-center gap-1 px-4 py-2 mb-4 border rounded-lg bg-amber-50 border-amber-200">
+              <div className="flex items-center gap-2">
+                <AlertCircle className="w-4 h-4 text-amber-600" />
+                <p className="text-sm font-medium text-amber-800">
+                  Waiting for dependencies
+                </p>
+              </div>
+              {remainingDependencies > 0 && (
+                 <span className="text-xs font-semibold text-amber-600">
+                   {remainingDependencies} task(s) remaining
+                 </span>
+              )}
+            </div>
 
-)}
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <span className={`px-4 py-1.5 text-xs font-semibold text-white rounded-full shadow-sm ${getStatusColor(task.status)}`}>
+                {task.status}
+              </span>
+            </div>
+             <div className="pt-4 border-t border-gray-200">
+              <p className="text-xs text-gray-500">
+                Created on {formatDate(task.createdAt)}
+              </p>
+            </div>
+          </div>
+        ) : (
+          /* --- CASE B: READY OR COMPLETED --- */
+          <>
+            <div className="flex items-start justify-between mb-4">
+              <h3 className="flex-1 text-lg font-bold text-gray-800 line-clamp-2">
+                {taskName}
+              </h3>
+              {/* أيقونة للحالة المنتهية */}
+              {isCompleted ? (
+                 <div className="p-2 bg-green-100 rounded-lg">
+                    <Check className="w-5 h-5 text-green-600" />
+                 </div>
+              ) : (
+                 <div className="p-2 bg-blue-100 rounded-lg">
+                    <ClipboardList className="w-5 h-5 text-blue-600" />
+                 </div>
+              )}
+            </div>
 
+            <div className="p-4 mb-4 border border-gray-200 shadow-sm bg-gray-50 rounded-xl">
+              {/* Task Description (User specific) */}
+              {task.description && (
+                <div className="flex items-start gap-3 mb-3">
+                  <span className="flex-shrink-0 w-6 h-6 text-blue-600">
+                    <ClipboardList className="w-6 h-6" />
+                  </span>
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-700">User Note</h4>
+                    <p className="mt-1 text-sm text-gray-600 line-clamp-3">
+                      {task.description}
+                    </p>
+                  </div>
+                </div>
+              )}
 
+              {/* Task Description (General - only if task_id exists) */}
+              {task.task_id?.description && (
+                <div className="flex items-start gap-3">
+                  <span className="flex-shrink-0 w-6 h-6 text-green-600">
+                    <UserCircle className="w-6 h-6" />
+                  </span>
+                  <div>
+                    <h4 className="text-sm font-semibold text-gray-700">Original Description</h4>
+                    <p className="mt-1 text-sm text-gray-600 line-clamp-3">
+                      {task.task_id.description}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
 
-                        <div className="my-3 mb-6 space-y-3 ">
-                          <div className="flex items-center gap-2 text-sm">
-                            <Calendar className="w-4 h-4 text-gray-500" />
-                            <span className="text-gray-600">
-                      End Date      {task.task_id?.end_date ? formatDate(task.task_id.end_date) : 'N/A'}
-                            </span>
-                          </div>
+            {task.task_id?.file && (
+              <ButtonDown file={task.task_id?.file} />
+            )}
 
-                          <div className="flex items-center gap-2">
-                            <Check className="w-4 h-4 text-gray-500" />
-                            <span className={`px-3 py-1 text-xs font-semibold text-white rounded-full ${getPriorityColor(task.task_id?.priority ?? '')}`}>
-                              Priority: {task.task_id?.priority ?? 'N/A'}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Check className="w-4 h-4 text-gray-500" />
-                            <span className={`px-3 py-1 text-xs font-semibold text-white bg-black rounded-full `}>
-                              role: {task.role ?? 'N/A'}
-                            </span>
-                          </div>
+            <div className="my-3 mb-6 space-y-3">
+              <div className="flex items-center gap-2 text-sm">
+                <Calendar className="w-4 h-4 text-gray-500" />
+                <span className="text-gray-600">
+                  End Date {task.task_id?.end_date ? formatDate(task.task_id.end_date) : 'N/A'}
+                </span>
+              </div>
 
-                          <div className="flex items-center gap-2">
-                            <UserCircle className="w-4 h-4 text-gray-500" />
-                            <span className={`px-3 py-1 text-xs font-semibold text-white rounded-full ${getStatusColor(task.status)}`}>
-                              {task.status}
-                            </span>
-                          </div>
-                      
-                        </div>
-                        {task.role==="member"&&(
+              <div className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-gray-500" />
+                <span className={`px-3 py-1 text-xs font-semibold text-white rounded-full ${getPriorityColor(task.task_id?.priority ?? '')}`}>
+                  Priority: {task.task_id?.priority ?? 'Normal'}
+                </span>
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-gray-500" />
+                <span className={`px-3 py-1 text-xs font-semibold text-white bg-black rounded-full`}>
+                  role: {task.role ?? 'N/A'}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <UserCircle className="w-4 h-4 text-gray-500" />
+                <span className={`px-3 py-1 text-xs font-semibold text-white rounded-full ${getStatusColor(task.status)}`}>
+                  {task.status}
+                </span>
+              </div>
+            </div>
+
+                    {task.role==="member"&&  !isCompleted&& (
                        <button
   onClick={() => {
       nav(`/user/task/${task.task_id?._id}`);
@@ -577,6 +596,7 @@ placeholder="Search for a task..."
 > 
   show User in Project
 </button>
+
   <button
   onClick={() => {
       nav(`/user/task/${task.task_id?._id}`);
@@ -588,6 +608,7 @@ placeholder="Search for a task..."
 </button>
   </>
 )}
+
 {task.role==="membercanapprove" &&(
   <button
   onClick={() => {
@@ -602,13 +623,11 @@ placeholder="Search for a task..."
 
 )}
 
-
-                      </>
-                    )}
-                  </div>
-                );
-              })}
-              
+          </>
+        )}
+      </div>
+    );
+  })}
             </div>
           )}
         </div>
@@ -618,3 +637,5 @@ placeholder="Search for a task..."
 };
 
 export default ProjectId;
+
+           

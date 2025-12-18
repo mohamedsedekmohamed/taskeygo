@@ -7,16 +7,26 @@ import useDelete from "../../Hooks/useDelete";
 import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 import Loading from "../../Component/Loading";
-import { useLocation } from "react-router-dom";
+import { useLocation ,useNavigate} from "react-router-dom";
 import { useSearchStore } from "../../store/useSearchStore";
 import { useTranslation } from "react-i18next";
 // import axios from "axios";
+import { TiArrowBack } from "react-icons/ti";
 
 interface UserInfo {
   _id: string;
   name: string;
   email: string;
   role: string;
+}
+
+interface DependsOnItem {
+  _id: string;
+  user_id: {
+    _id: string;
+    name: string;
+    email: string;
+  };
 }
 
 interface UserTaskItem {
@@ -27,20 +37,16 @@ interface UserTaskItem {
 roleInsideTask:string
 status:string;
   user: UserInfo;
+    dependsOn: DependsOnItem[];
 }
-// interface UserReasons {
-//   _id: string;
-//   reason: string;
-//   points: string;
-// }
+
 
 const UserTaskProject: React.FC = () => {
-    // const token = localStorage.getItem("token") || "";
 
   const { searchQuery } = useSearchStore();
   const { t } = useTranslation();
   const { theme } = useTheme();
-
+const nav=useNavigate();
   const { data, loading, error, get } = useGet<UserTaskItem[]>();
   const { del } = useDelete();
   const location = useLocation();
@@ -79,7 +85,16 @@ const UserTaskProject: React.FC = () => {
       }
     }
   };
-
+const buttonClasses = `
+    flex items-center gap-2 rounded-lg border transition font-semibold
+    text-base sm:text-lg md:text-xl
+    px-3 sm:px-4 py-1.5 sm:py-2 mt-2 sm:mt-3
+    ${
+      theme === "dark"
+        ? "bg-black/80 hover:bg-black/60 border-white text-white"
+        : "bg-maincolor/50 hover:bg-maincolor/80 text-maincolor hover:text-white border border-maincolor"
+    }
+  `;
   const columns = [
 
     {
@@ -161,7 +176,34 @@ const UserTaskProject: React.FC = () => {
       </button>
     </div>
   ),
-}
+},
+{
+  key: "dependsOn",
+  label: t("DependsOn"),
+  render: (_: any, row: UserTaskItem) => {
+    if (!row.dependsOn || row.dependsOn.length === 0) {
+      return (
+        <span className="px-2 py-1 text-xs text-green-700 bg-green-100 rounded">
+          {t("NoDependency")}
+        </span>
+      );
+    }
+
+    return (
+      <div className="flex flex-col gap-1">
+        {row.dependsOn.map((dep) => (
+          <span
+            key={dep._id}
+            className="px-2 py-1 text-xs text-blue-700 bg-blue-100 rounded"
+          >
+            {dep.user_id.name}
+          </span>
+        ))}
+      </div>
+    );
+  },
+},
+
 
   ];
 
@@ -170,7 +212,9 @@ const UserTaskProject: React.FC = () => {
     if (!searchQuery) return data;
 
     return data.filter((item) =>
-      item.user.name.toLowerCase().includes(searchQuery.toLowerCase())
+      item.user.name.toLowerCase().includes(searchQuery.toLowerCase())||
+      item.user.email.toLowerCase().includes(searchQuery.toLowerCase())||
+      item.status.toLowerCase().includes(searchQuery.toLowerCase())
     );
   }, [data, searchQuery]);
 
@@ -184,6 +228,9 @@ const UserTaskProject: React.FC = () => {
           title={t("AddUsertask")}
           to={`/admin/addusertaskproject/${tasktId}/${projectId}`}
         />
+         <button onClick={() => nav(-1)} className={buttonClasses}>
+                     <TiArrowBack className="inline-block text-sm sm:text-base" />
+                   </button>
       </div>
 
    {error ? (

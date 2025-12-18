@@ -12,6 +12,9 @@
     "task":"Tasks",
     "rejected":"Reject Reson"
   },
+  "PleaseSelectStratDate":"Please Select Strat Date",
+    "DependsOn": " Depends On",
+  "NoDependency": "No Dependency ",
   "lang_en": "English",
   "lang_ar": "العربية",
   "Projects": "Projects",

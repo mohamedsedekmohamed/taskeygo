@@ -37,7 +37,7 @@ interface TaskResponse {
     Depatment_id?: { _id: string; name: string };
     priority?: "low" | "medium" | "high";
     end_date?: string;
-    recorde?: string;
+    // recorde?: string;
     file?: string;
   };
 }
@@ -62,7 +62,7 @@ const { get: getTask } = useGet<TaskResponse>();
   const [priority, setPriority] = useState<number | null>(null);
   const [end_date, setEndDate] = useState("");
   const [start_date, setStartDate] = useState("");
-  const [recorde, setRecorde] = useState("");
+  // const [recorde, setRecorde] = useState("");
 
 const [file, setFile] = useState<File | string | null>(null);
   const [loadingData, setLoadingData] = useState(false);
@@ -108,9 +108,9 @@ const [file, setFile] = useState<File | string | null>(null);
 
             setEndDate(task.end_date ? task.end_date.split("T")[0] : "");
             setStartDate(task.start_date ? task.start_date.split("T")[0] : "");
-      if(task.recorde !==null) {  
-        setRecorde(task.recorde || "");
-      } 
+      // if(task.recorde !==null) {  
+      //   setRecorde(task.recorde || "");
+      // } 
             if (task.file) setFile(task.file);
           }
         } catch {
@@ -125,39 +125,39 @@ const [file, setFile] = useState<File | string | null>(null);
   }, [TaskId,isEdit]);
 
   // Audio recording
-  const [recording, setRecording] = useState<boolean>(false);
-  const [audioURL, setAudioURL] = useState<string | null>(null);
+  // const [recording, setRecording] = useState<boolean>(false);
+  // const [audioURL, setAudioURL] = useState<string | null>(null);
 
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const chunksRef = useRef<Blob[]>([]);
+  // const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  // const chunksRef = useRef<Blob[]>([]);
 
-  const startRecording = async () => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      mediaRecorderRef.current = new MediaRecorder(stream);
+  // const startRecording = async () => {
+  //   try {
+  //     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  //     mediaRecorderRef.current = new MediaRecorder(stream);
 
-      mediaRecorderRef.current.ondataavailable = (e: BlobEvent) => {
-        chunksRef.current.push(e.data);
-      };
+  //     mediaRecorderRef.current.ondataavailable = (e: BlobEvent) => {
+  //       chunksRef.current.push(e.data);
+  //     };
 
-      mediaRecorderRef.current.onstop = () => {
-        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
-        setAudioURL(URL.createObjectURL(blob));
-        chunksRef.current = [];
-      };
+  //     mediaRecorderRef.current.onstop = () => {
+  //       const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+  //       setAudioURL(URL.createObjectURL(blob));
+  //       chunksRef.current = [];
+  //     };
 
-      mediaRecorderRef.current.start();
-      setRecording(true);
+  //     mediaRecorderRef.current.start();
+  //     setRecording(true);
 
-    } catch {
-      toast.error(t("FailedToAccessMicrophone"));
-    }
-  };
+  //   } catch {
+  //     toast.error(t("FailedToAccessMicrophone"));
+  //   }
+  // };
 
-  const stopRecording = () => {
-    mediaRecorderRef.current?.stop();
-    setRecording(false);
-  };
+  // const stopRecording = () => {
+  //   mediaRecorderRef.current?.stop();
+  //   setRecording(false);
+  // };
 
 const handleSave = async () => {
 if (!title.trim()) {
@@ -199,7 +199,7 @@ if (description.trim().length < 5) {
     return;
   }
   if (!start_date) {
-    toast.error(t("PleaseSelectEndDate"));
+    toast.error(t("PleaseSelectStratDate"));
     return;
   }
 const toStartOfDayTimestamp = (dateStr: string) => {
@@ -241,12 +241,12 @@ if (startTs > endTs) {
      if (file)formData.append("file", file);
 
   
-    if (audioURL) {
-      const blob = await fetch(audioURL).then(r => r.blob());
-      formData.append("recorde", blob, "record.webm");
-    }
+    // if (audioURL) {
+    //   const blob = await fetch(audioURL).then(r => r.blob());
+    //   formData.append("recorde", blob, "record.webm");
+    // }
 
-    if (recorde) formData.append("recorde", recorde);
+    // if (recorde) formData.append("recorde", recorde);
 
     const url = isEdit
       ? `https://taskatbcknd.wegostation.com/api/admin/tasks/${TaskId}`
@@ -359,7 +359,7 @@ if (startTs > endTs) {
             </div>
           )}
 
-          <div className="flex items-center gap-2 mt-2">
+          {/* <div className="flex items-center gap-2 mt-2">
             <button
               type="button"
               onClick={startRecording}
@@ -377,9 +377,9 @@ if (startTs > endTs) {
             >
               {t("StopRecording")}
             </button>
-          </div>
+          </div> */}
 
-          {audioURL && (
+          {/* {audioURL && (
             <div className="flex items-center justify-between px-3 py-1 mt-2 bg-gray-100 rounded">
               <audio src={audioURL} controls />
               <button
@@ -389,7 +389,7 @@ if (startTs > endTs) {
                 ✕
               </button>
             </div>
-          )}
+          )} */}
         </div>
 
         <ButtonDone checkLoading={postLoading || putLoading} handleSave={handleSave} edit={isEdit} />

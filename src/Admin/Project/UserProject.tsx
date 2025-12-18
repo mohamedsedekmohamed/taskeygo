@@ -10,6 +10,7 @@ import Loading from "../../Component/Loading";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSearchStore } from "../../store/useSearchStore";
 import { useTranslation } from "react-i18next";
+import { TiArrowBack } from "react-icons/ti";
 
 interface UserType {
   _id: string;
@@ -32,7 +33,16 @@ const UserProject: React.FC = () => {
   const nav = useNavigate();
   const location = useLocation();
   const projectId = location.state || null;
-
+const buttonClasses = `
+    flex items-center gap-2 rounded-lg border transition font-semibold
+    text-base sm:text-lg md:text-xl
+    px-3 sm:px-4 py-1.5 sm:py-2 mt-2 sm:mt-3
+    ${
+      theme === "dark"
+        ? "bg-black/80 hover:bg-black/60 border-white text-white"
+        : "bg-maincolor/50 hover:bg-maincolor/80 text-maincolor hover:text-white border border-maincolor"
+    }
+  `;
   useEffect(() => {
     get(`https://taskatbcknd.wegostation.com/api/admin/user-project/${projectId}`);
   }, [get, projectId]);
@@ -62,17 +72,35 @@ const UserProject: React.FC = () => {
     }
   };
 
-  const columns = [
-    { key: "name", label: t("Name"), render: (_: any, row: UserType) => row.user_id.name },
-    { key: "email", label: t("Email"), render: (_: any, row: UserType) => row.user_id.email },
-    { key: "role", label: t("Role"), render: (_: any, row: UserType) => row.role },
-    {
-      key: "actions",
-      label: t("Actions"),
-      render: (_: any, row: UserType) => (
+const columns = [
+  {
+    key: "name",
+    label: t("Name"),
+    render: (_: any, row: UserType) => row.user_id.name,
+  },
+  {
+    key: "email",
+    label: t("Email"),
+    render: (_: any, row: UserType) => row.user_id.email,
+  },
+  {
+    key: "role",
+    label: t("Role"),
+    render: (_: any, row: UserType) => row.role,
+  },
+  {
+    key: "actions",
+    label: t("Actions"),
+    render: (_: any, row: UserType) => {
+      // لو Admin → مفيش Actions
+      if (row.role === "admin") return null;
+
+      return (
         <div className="flex gap-2">
           <button
-            onClick={() => nav(`/admin/adduserproject/${projectId}`, { state: row })}
+            onClick={() =>
+              nav(`/admin/adduserproject/${projectId}`, { state: row })
+            }
             className="px-3 py-1 text-white bg-blue-600 rounded hover:bg-blue-700"
           >
             {t("Edit")}
@@ -85,9 +113,10 @@ const UserProject: React.FC = () => {
             {t("Delete")}
           </button>
         </div>
-      ),
+      );
     },
-  ];
+  },
+];
 
   const filteredUsers = useMemo(() => {
     if (!searchQuery || !data) return data;
@@ -104,6 +133,9 @@ const UserProject: React.FC = () => {
     <div className="p-4">
       <div className="flex items-center justify-between mb-4">
         <ButtonAdd title={t("AddUser")} to={`/admin/adduserproject/${projectId}`} />
+          <button onClick={() => nav(-1)} className={buttonClasses}>
+                     <TiArrowBack className="inline-block text-sm sm:text-base" />
+                   </button>
       </div>
 
       {error && <p className="text-red-500">{t("Failed to load users")}</p>}

@@ -14,6 +14,9 @@
 
 
   },
+    "DependsOn": "معتمد على",
+    "PleaseSelectStratDate":"يجب اضافة بداية التاريخ",
+  "NoDependency": "غير معتمد",
   "lang_en": "English",
   "lang_ar": "العربية",
 "AddProject": "إضافة مشروع",

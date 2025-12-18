@@ -174,7 +174,7 @@ const Task: React.FC = () => {
         {/* Toggle Button */}
         <button
           onClick={toggleActive}
-          className={`px-3 py-1 text-xs rounded-lg font-semibold transition ${
+          className={`px-3 py-1 text-xs rounded-lg font-semibold transition cursor-pointer ${
             row.is_active
               ? "bg-red-500 hover:bg-red-600 text-white"
               : "bg-green-500 hover:bg-green-600 text-white"

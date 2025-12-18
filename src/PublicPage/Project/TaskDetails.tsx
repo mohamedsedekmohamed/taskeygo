@@ -244,7 +244,9 @@ const TaskDetails: React.FC = () => {
   }
 
   const info = data.data.data;
-  const allMembersFinished = info.teamMembers
+  const teamMembers = info.teamMembers ?? [];
+
+  const allMembersFinished = teamMembers
     ?.filter(m => m.role === "member")
     .every(m => m.status === "Approved from Member_can_approve");
   // const taskid = info.task._id
@@ -348,12 +350,12 @@ const TaskDetails: React.FC = () => {
                   <h3 className="text-lg font-semibold text-gray-900">Team Members</h3>
                 </div>
 <span className="text-sm text-gray-600">
-  {info.teamMembers.filter(m => m.role === "member").length ?? 0} Members
+  {teamMembers.filter(m => m.role === "member").length ?? 0} Members
 </span>
               </div>
 
               <div className="p-2 space-y-4">
-                {info.teamMembers && info.teamMembers.length > 0 ? (
+                {teamMembers && teamMembers.length > 0 ? (
                   info.teamMembers.filter(member=>member.role==="member").map((member, idx) => (
                     <div key={member.userTaskId || idx} className="flex flex-col gap-2 p-4 bg-white border rounded-xl sm:flex-row sm:items-center">
                       <div className="flex items-center flex-1 gap-1">
