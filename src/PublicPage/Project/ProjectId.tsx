@@ -428,7 +428,7 @@ placeholder="Search for a task..."
     // --- 2. JSX Rendering ---
     return (
       <div
-        key={task._id}
+        key={index}
         className={`relative p-6 transition-all duration-300 shadow-lg rounded-2xl
           ${isCompleted
             ? "bg-green-50 border-2 border-green-500"

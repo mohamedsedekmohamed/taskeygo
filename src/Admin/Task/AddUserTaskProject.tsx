@@ -71,8 +71,12 @@ const [usertask, setUsertask] = useState<UserReasons[]>([]);
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
-const users = (res.data.data?.users || []).filter(user => user.role !== "admin");
-        setOptions(users);
+const users = (res.data.data?.users || []).filter(
+  (user: { role: string }) => user.role !== "admin"
+);
+
+setOptions(users);
+
       })
       .catch((err) => console.error(err));
 
