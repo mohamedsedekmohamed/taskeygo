@@ -113,6 +113,7 @@ const TaskDetails: React.FC = () => {
   const [showRejectPopup, setShowRejectPopup] = useState(false);
   const [selectedReason, setSelectedReason] = useState<string>("");
   const [selectedMemberId, setSelectedMemberId] = useState<string>("");
+const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     const fetchReasons = async () => {
@@ -185,7 +186,7 @@ const TaskDetails: React.FC = () => {
     return () => {
       isMounted = false;
     };
-  }, [id]);
+  }, [id,refresh]);
 
   const getPriorityColor = (priority?: string) => {
     switch (priority?.toLowerCase()) {
@@ -223,12 +224,30 @@ const TaskDetails: React.FC = () => {
       const token = localStorage.getItem("token") || "";
 
       await axios.put(
+        `https://taskatbcknd.wegostation.com/api/user/tasks/review/${ids}`,
+        { status, rejection_reasonId:reason },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setRefresh(prev => !prev);
+
+    } catch (err) {
+      console.error("Update Status Error:", err);
+      toast.error("Failed to update status");
+    }
+  };
+    const updateStatususer = async (status: string, ids: string, reason?: string) => {
+    try {
+      const token = localStorage.getItem("token") || "";
+
+      await axios.put(
         `https://taskatbcknd.wegostation.com/api/user/tasks/${ids}`,
         { status, reason },
         { headers: { Authorization: `Bearer ${token}` } }
       );
+setRefresh(prev => !prev);
 
-      window.location.reload();
+      
     } catch (err) {
       console.error("Update Status Error:", err);
       toast.error("Failed to update status");
@@ -273,8 +292,6 @@ const TaskDetails: React.FC = () => {
   const projectInfo = info.project;
   const summary = info.summary;
 
-  // 🔥🔥🔥 التعديل هنا 🔥🔥🔥
-  // نتحقق مما إذا كان جميع الـ members في حالة done أو Approved
   const allMembersFinished = teamMembers
     ?.filter((m) => m.role === "member")
     .every(
@@ -479,7 +496,7 @@ const TaskDetails: React.FC = () => {
                                           }
                                         );
                                         member.status = newStatus;
-                                        window.location.reload();
+                                        setRefresh(prev => !prev);
                                       } catch (err) {
                                         console.error(
                                           "Update Status Error:",
@@ -510,6 +527,7 @@ const TaskDetails: React.FC = () => {
                                       const newStatus = e.target.value;
 
                                       updateStatus(
+                                        
                                         newStatus,
                                         member.userTaskId,
                                         undefined
@@ -520,7 +538,7 @@ const TaskDetails: React.FC = () => {
 
                                     {member.status === "pending" && (
                                       <option value="in_progress">
-                                        In Progress
+                                        In Progress  
                                       </option>
                                     )}
 
@@ -660,7 +678,7 @@ const TaskDetails: React.FC = () => {
                                       onChange={(e) => {
                                         const newStatus = e.target.value;
 
-                                        updateStatus(
+                                        updateStatususer(
                                           newStatus,
                                           member.userTaskId,
                                           undefined
@@ -671,13 +689,13 @@ const TaskDetails: React.FC = () => {
 
                                       {member.status === "pending" && (
                                         <option value="in_progress">
-                                          In Progress
+                                          In Progress 
                                         </option>
                                       )}
 
                                       {member.status === "pending_edit" && (
                                         <option value="in_progress_edit">
-                                          In Progress Edit
+                                          In Progress Edit 
                                         </option>
                                       )}
 

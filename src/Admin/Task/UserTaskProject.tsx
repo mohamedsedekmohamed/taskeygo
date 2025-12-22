@@ -136,7 +136,7 @@ const buttonClasses = `
           const newRole = e.target.value;
           try {
             const res = await fetch(
-              `https://taskatbcknd.wegostation.com/api/admin/user-task/role/${tasktId}`,
+              `https://taskatbcknd.wegostation.com/api/admin/user-task/role/${row.userTaskId}`,
               {
                 method: "PUT",
                 headers: {
