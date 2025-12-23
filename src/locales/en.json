@@ -10,7 +10,8 @@
     "departments":"Departments",
     "project":"Project",
     "task":"Tasks",
-    "rejected":"Reject Reson"
+    "rejected":"Reject Reson",
+    "Payments":"Payments"
   },
   "PleaseSelectStratDate":"Please Select Strat Date",
     "DependsOn": " Depends On",
@@ -309,7 +310,23 @@
   "InvalidDateFormat": "Invalid date format",
   "StartDateCannotBeAfterEndDate": "Start date cannot be after end date",
    "AddUsertaskinProject": "Add User Task in Project",
-  "EditUsertaskinproject": "Edit User Task in Project"
+  "EditUsertaskinproject": "Edit User Task in Project",
+  "Choose Plan": "Choose Plan",
+  "Yearly": "Yearly",
+  "Members": "Members",
+  "Subscription Type": "Subscription Type",
+  "Payment Method": "Payment Method",
+  "Upload Receipt": "Upload Receipt",
+  "Click to upload receipt": "Click to upload receipt",
+  "Total": "Total",
+  "Confirm Payment": "Confirm Payment",
+  "Submitting...": "Submitting...",
+  "Failed to load payment data": "Failed to load payment data",
+  "Please select plan & payment method": "Please select plan & payment method",
+  "Please upload receipt": "Please upload receipt",
+  "Payment sent.": "Payment sent.",
+  "Payment failed": "Payment failed",
+  "Image must be < 5MB": "Image must be < 5MB"
 
 
 

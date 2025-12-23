@@ -99,7 +99,7 @@ const AddProject: React.FC = () => {
           toast.success(t("Projectaddedsuccessfully"));
           nav("/admin/project");
         } else {
-          toast.error(t("Failedtoaddproject"));
+          toast.error(res.error || t("Failedtoaddproject"));
         }
       }
     } catch {

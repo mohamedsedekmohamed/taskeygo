@@ -6,7 +6,6 @@ import Loader from "../../Component/Loading";
 import { FaUsers, FaTasks, FaCheckCircle, FaClock, FaFlagCheckered } from 'react-icons/fa';
 import ButtonDown from "../../Ui/ButtonDown";
 
-// Interfaces
 export interface IUser {
   _id: string;
   name: string;
@@ -455,6 +454,7 @@ placeholder="Search for a task..."
             <h3 className="mb-3 text-xl font-bold text-gray-800">
               {taskName}
             </h3>
+           
 
             {taskDescription && (
               <p className="max-w-md mx-auto mb-4 text-sm leading-relaxed text-gray-500 line-clamp-2">
@@ -616,7 +616,6 @@ placeholder="Search for a task..."
     
   }}
   className="w-full py-3 my-3 font-semibold text-white transition-all duration-300 transform bg-black rounded-xl hover:scale-105"
-  // disabled={!task?.task_id?.projectId}
 > 
   show User in Project
 </button>

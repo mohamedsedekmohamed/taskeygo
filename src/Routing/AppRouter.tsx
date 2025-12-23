@@ -12,8 +12,8 @@ import VerifyCodeForm from "../Auth/VerifyCodeForm";
 import VerifyPasswordCoda from '../Auth/VerifyPasswordCoda'
 import LoginSuper from "../Auth/LoginSuper";
 import ProtectedRoute from "../Auth/ProtectedRoute";
-import SuperAdminsDashboard from "../SuperAdmins/Dashboard";
 // import UsersDashboard from "../Users/Dashboard";
+import SuperAdminsDashboard from "../SuperAdmins/Dashboard";
 import Admin from "../SuperAdmins/Admin/Admin";
 import AddAdmin from "../SuperAdmins/Admin/AddAdmin";
 import Coupon from "../SuperAdmins/Coupon/Coupon";
@@ -40,6 +40,7 @@ import UserProject from "../Admin/Project/UserProject"
 import AddUserProject from '../Admin/Project/AddUserProject'
 import UserTaskProject from "../Admin/Task/UserTaskProject";
 import AddUserTaskProject from "../Admin/Task/AddUserTaskProject";
+import Payments from "../Admin/Payments/Payments";
 //user
 import Home from "../PublicPage/Home";
 import Plansp from '../PublicPage/Plans/Plans'
@@ -51,6 +52,7 @@ import Projectuser from '../PublicPage/Project/Project'
 import ProjectId from '../PublicPage/Project/ProjectId'
 import Rejections from '../PublicPage/Rejections/Rejections'
 import TaskDetails from '../PublicPage/Project/TaskDetails'
+import Teamlead from "../PublicPage/Project/Teamlead";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -75,6 +77,7 @@ const router = createBrowserRouter([
       { path: "rejections", element: <Rejections /> },
       { path: "task/:id", element: <Tasks /> },
       { path: "ProjectId/:id", element: <ProjectId /> },
+      { path: "teamlead/:id", element: <Teamlead /> },
 
     ],
   },
@@ -131,6 +134,7 @@ const router = createBrowserRouter([
       {path:"rejected",element:<Rejected/>},
       {path:"addrejected",element:<AddRejected/>},
       {path:"userproject",element:<UserProject/>},
+      {path:"payments",element:<Payments/>},
       {path:"adduserproject/:id",element:<AddUserProject/>},
       {path:"usertaskproject",element:<UserTaskProject/>},
       {path:"addusertaskproject/:taskId/:projectId",element:<AddUserTaskProject/>},

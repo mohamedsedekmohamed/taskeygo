@@ -132,14 +132,31 @@ const Project: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* View Button */}
-                  <button
+{project.role === "member" ? (
+   <button
                     onClick={() => navigate(`/user/ProjectId/${project.project_id?._id ?? ""}`)}
                     className="flex items-center justify-center w-full gap-2 px-6 py-3 font-semibold text-white transition-all duration-300 transform bg-black rounded-xl hover:bg-black/80"
                   >
                     <Eye className="w-5 h-5" />
                     <span>View Project</span>
                   </button>
+)
+:
+(
+    <button
+                    onClick={() => navigate(`/user/teamlead/${project.project_id?._id ?? ""}`)}
+                    className="flex items-center justify-center w-full gap-2 px-6 py-3 font-semibold text-white transition-all duration-300 transform bg-black rounded-xl hover:bg-black/80"
+                  >
+                    <Eye className="w-5 h-5" />
+                    <span>View Project</span>
+                  </button>
+)
+
+
+}
+                 
+
+                  
                 </div>
               </div>
             ))}

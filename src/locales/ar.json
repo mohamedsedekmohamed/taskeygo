@@ -10,8 +10,8 @@
     "departments": "الأقسام",
 "project": "المشروع",
     "task":"المهام",
-    "rejected":"أسباب الرفض"
-
+    "rejected":"أسباب الرفض",
+    "Payments":"المدفوعات"
 
   },
     "DependsOn": "معتمد على",
@@ -313,7 +313,23 @@
   "InvalidDateFormat": "صيغة التاريخ غير صحيحة",
   "StartDateCannotBeAfterEndDate": "لا يمكن أن يكون تاريخ البداية بعد تاريخ النهاية",
   "AddUsertaskinProject": "إضافة مهمة مستخدم في المشروع",
-  "EditUsertaskinproject": "تعديل مهمة المستخدم في المشروع"
+  "EditUsertaskinproject": "تعديل مهمة المستخدم في المشروع",
+  "Choose Plan": "اختر الخطة",
+  "Yearly": "سنوي",
+  "Members": "الأعضاء",
+  "Subscription Type": "نوع الاشتراك",
+  "Payment Method": "طريقة الدفع",
+  "Upload Receipt": "رفع الإيصال",
+  "Click to upload receipt": "اضغط لرفع الإيصال",
+  "Total": "الإجمالي",
+  "Confirm Payment": "تأكيد الدفع",
+  "Submitting...": "جارٍ الإرسال...",
+  "Failed to load payment data": "فشل تحميل بيانات الدفع",
+  "Please select plan & payment method": "يرجى اختيار الخطة وطريقة الدفع",
+  "Please upload receipt": "يرجى رفع الإيصال",
+  "Payment sent.": "تم إرسال الدفع.",
+  "Payment failed": "فشل الدفع",
+  "Image must be < 5MB": "يجب أن تكون الصورة أقل من 5 ميجابايت"
 
 
 

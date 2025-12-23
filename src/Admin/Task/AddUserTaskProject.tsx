@@ -72,7 +72,7 @@ const [usertask, setUsertask] = useState<UserReasons[]>([]);
       })
       .then((res) => {
 const users = (res.data.data?.users || []).filter(
-  (user: { role: string }) => user.role !== "admin"
+  (user: { role: string }) => user.role === "member"
 );
 
 setOptions(users);
