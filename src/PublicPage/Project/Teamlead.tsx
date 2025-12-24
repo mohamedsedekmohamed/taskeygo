@@ -5,6 +5,8 @@ import { UserCircle, Mail, Calendar, ClipboardList, Folder, Check, AlertCircle, 
 import { FaUsers, FaTasks, FaCheckCircle, FaClock, FaFlagCheckered } from 'react-icons/fa';
 import Loader from "../../Component/Loading";
 import ButtonDown from "../../Ui/ButtonDown";
+import { HiOutlineArrowRightStartOnRectangle } from "react-icons/hi2";
+import { GiFinishLine } from "react-icons/gi";
 
 export interface IUser {
   _id: string;
@@ -37,6 +39,8 @@ export interface ISubTask {
   is_finished: boolean;
   role: string;
   User_taskId: any[];
+  start_date: string,
+  end_date: string,
   createdAt: string;
   updatedAt: string;
 }
@@ -46,12 +50,13 @@ export interface ITaskInfo {
   name: string;
   description: string;
   projectId: string;
-  end_date: string;
   priority: string;
   status: string;
   recorde: string | null;
   file: string | null;
   Depatment_id: string;
+   start_date: string,
+  end_date: string,
   createdBy: string;
   createdAt: string;
   updatedAt: string;
@@ -66,6 +71,8 @@ export interface IUserTask {
   role: string;
   description: string;
   User_taskId: ISubTask[];
+  start_date: string,
+  end_date: string,
   createdAt: string;
   updatedAt: string;
 }
@@ -130,7 +137,9 @@ const Teamlead: React.FC = () => {
         if (!task.task_id) return false;
         return (
           task.task_id.name?.toLowerCase().includes(searchText.toLowerCase()) ||
-          task.task_id.description?.toLowerCase().includes(searchText.toLowerCase())
+          task.task_id.description?.toLowerCase().includes(searchText.toLowerCase())||
+          task.description?.toLowerCase().includes(searchText.toLowerCase())||
+          task.user_id.email?.toLowerCase().includes(searchText.toLowerCase())
         );
       });
     }
@@ -161,8 +170,29 @@ const Teamlead: React.FC = () => {
     if (role?.toLowerCase().includes("approve")) return "bg-blue-600";
     return "bg-gray-700";
   };
+type StatusValue =
+  | ""
+  | "pending"
+  | "in_progress"
+  | "Approved from Member_can_approve"
+  | "pending_edit"
+  | "in_progress_edit"
+  | "rejected"
+  | "done";
 
-  // Loading state
+// كائن mapping بين القيم والنصوص
+const statusNames: Record<StatusValue, string> = {
+  "": "All statuses",
+  "pending": "Pending",
+  "in_progress": "In Progress",
+  "Approved from Member_can_approve": "Wait Approved",
+  "pending_edit": "Pending Edit",
+  "in_progress_edit": "In Progress Edit",
+  "rejected": "Rejected",
+  "done": "Completed"
+};
+
+
   if (loading) {
     return (
       <div className="min-h-screen text-center">
@@ -396,9 +426,12 @@ const Teamlead: React.FC = () => {
             >
               <option value="">All statuses</option>
               <option value="pending">Pending</option>
-              <option value="approved">Approved</option>
+              <option value="in_progress">In Progress</option>
+              <option value="Approved from Member_can_approve">Wait Approved</option>
+              <option value="pending_edit">Pending Edit</option>
+              <option value="in_progress_edit">In Progress Edit </option>
               <option value="rejected">Rejected</option>
-              <option value="completed">Completed</option>
+              <option value="done">Completed</option>
             </select>
           </div>
 
@@ -479,7 +512,6 @@ const Teamlead: React.FC = () => {
                           </div>
                         )}
 
-                        {/* Task Description (General - only if task_id exists) */}
                         {task.task_id?.description && (
                           <div className="flex items-start gap-3">
                             <span className="flex-shrink-0 w-6 h-6 text-green-600">
@@ -494,6 +526,34 @@ const Teamlead: React.FC = () => {
                           </div>
                         )}
                       </div>
+{task.start_date  && (
+    <div className="flex items-start gap-3">
+      <span className="flex-shrink-0 w-6 h-6 text-green-600">
+        <HiOutlineArrowRightStartOnRectangle className="w-6 h-6" />
+      </span>
+      <div>
+        <h4 className="text-sm font-semibold text-gray-700">Start</h4>
+        <p className="mt-1 text-sm text-gray-600 line-clamp-3">
+          {formatDate(task.start_date)}
+        </p>
+      </div>
+    </div>
+  )}
+{task.end_date  && (
+    <div className="flex items-start gap-3">
+      <span className="flex-shrink-0 w-6 h-6 text-green-600">
+        <GiFinishLine className="w-6 h-6" />
+      </span>
+      <div>
+        <h4 className="text-sm font-semibold text-gray-700">End</h4>
+        <p className="mt-1 text-sm text-gray-600 line-clamp-3">
+          {formatDate(task.end_date)}
+        </p>
+      </div>
+    </div>
+  )}
+
+
 
                       {task.task_id?.file && (
                         <ButtonDown file={task.task_id?.file} />
@@ -502,7 +562,7 @@ const Teamlead: React.FC = () => {
                       {/* Meta */}
                       <div className="flex flex-wrap items-center gap-2 text-xs">
                         <span className="px-3 py-1 font-semibold text-white bg-black rounded-full">
-                          {task.status}
+<span>{statusNames[task.status as StatusValue]}</span>
                         </span>
 
                         <span className="px-3 py-1 font-semibold text-gray-700 bg-gray-200 rounded-full">
